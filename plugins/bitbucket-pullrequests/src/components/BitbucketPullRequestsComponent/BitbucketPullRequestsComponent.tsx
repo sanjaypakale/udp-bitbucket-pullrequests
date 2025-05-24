@@ -9,8 +9,10 @@ import {
   Tooltip,
   Paper,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 import { InfoCard, Progress, ResponseErrorPanel } from '@backstage/core-components';
+import Skeleton from '@material-ui/lab/Skeleton';
 import useAsync from 'react-use/lib/useAsync';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useStyles } from './styles';
@@ -676,16 +678,30 @@ export const BitbucketPullRequestCard = ({ pullRequest }: BitbucketPullRequestCa
   );
 };
 
+// Loading skeleton component for pull request cards
+const PullRequestSkeleton = () => {
+  const classes = useStyles();
+  return (
+    <Card className={classes.skeletonCard} variant="outlined">
+      <CardContent>
+        <Skeleton variant="text" width="80%" height={32} />
+        <Skeleton variant="text" width="40%" height={24} style={{ marginTop: 8, marginBottom: 16 }} />
+        <Skeleton variant="rect" width="100%" height={100} style={{ marginBottom: 16 }} />
+        <Box display="flex" alignItems="center">
+          <Skeleton variant="circle" width={32} height={32} style={{ marginRight: 8 }} />
+          <Skeleton variant="text" width="40%" height={24} />
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
 export const BitbucketPullRequestsComponent = () => {
   const { entity } = useEntity();
   const classes = useStyles();
   
   // In a real implementation, you would use the entity to fetch relevant pull requests
   const { value, loading, error } = useAsync(fetchPullRequests);
-
-  if (loading) {
-    return <Progress />;
-  }
 
   if (error) {
     return <ResponseErrorPanel error={error} />;
@@ -702,58 +718,89 @@ export const BitbucketPullRequestsComponent = () => {
 
   return (
     <InfoCard title="Bitbucket Pull Requests">
-      <Grid container spacing={3}>
-        {/* Open PRs Column */}
-        <Grid item xs={12} md={4} className={classes.statusColumn}>
-          <Paper elevation={0} className={`${classes.columnHeader} ${classes.reviewRequiredHeader}`}>
-            <Typography variant="subtitle1">
-              Open ({pullRequestsByStatus.OPEN.length})
-            </Typography>
-          </Paper>
-          {pullRequestsByStatus.OPEN.map(pr => (
-            <BitbucketPullRequestCard key={pr.id} pullRequest={pr} />
-          ))}
-          {pullRequestsByStatus.OPEN.length === 0 && (
-            <Typography variant="body2" color="textSecondary" align="center">
-              No open pull requests
-            </Typography>
-          )}
+      {loading ? (
+        <>
+          <Grid container spacing={3}>
+            {/* Loading skeleton for Open PRs */}
+            <Grid item xs={12} md={4} className={classes.statusColumn}>
+              <Paper elevation={0} className={`${classes.columnHeader} ${classes.reviewRequiredHeader}`}>
+                <Typography variant="subtitle1">Open</Typography>
+              </Paper>
+              <PullRequestSkeleton />
+              <PullRequestSkeleton />
+            </Grid>
+            
+            {/* Loading skeleton for In Review */}
+            <Grid item xs={12} md={4} className={classes.statusColumn}>
+              <Paper elevation={0} className={`${classes.columnHeader} ${classes.reviewInProgressHeader}`}>
+                <Typography variant="subtitle1">In Review</Typography>
+              </Paper>
+              <PullRequestSkeleton />
+            </Grid>
+            
+            {/* Loading skeleton for Merged/Approved */}
+            <Grid item xs={12} md={4} className={classes.statusColumn}>
+              <Paper elevation={0} className={`${classes.columnHeader} ${classes.mergedHeader}`}>
+                <Typography variant="subtitle1">Merged/Approved</Typography>
+              </Paper>
+              <PullRequestSkeleton />
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        <Grid container spacing={3}>
+          {/* Open PRs Column */}
+          <Grid item xs={12} md={4} className={classes.statusColumn}>
+            <Paper elevation={0} className={`${classes.columnHeader} ${classes.reviewRequiredHeader}`}>
+              <Typography variant="subtitle1">
+                Open ({pullRequestsByStatus.OPEN.length})
+              </Typography>
+            </Paper>
+            {pullRequestsByStatus.OPEN.map(pr => (
+              <BitbucketPullRequestCard key={pr.id} pullRequest={pr} />
+            ))}
+            {pullRequestsByStatus.OPEN.length === 0 && (
+              <Typography variant="body2" color="textSecondary" align="center">
+                No open pull requests
+              </Typography>
+            )}
+          </Grid>
+          
+          {/* In Review Column */}
+          <Grid item xs={12} md={4} className={classes.statusColumn}>
+            <Paper elevation={0} className={`${classes.columnHeader} ${classes.reviewInProgressHeader}`}>
+              <Typography variant="subtitle1">
+                In Review ({pullRequestsByStatus.REVIEW_IN_PROGRESS.length})
+              </Typography>
+            </Paper>
+            {pullRequestsByStatus.REVIEW_IN_PROGRESS.map(pr => (
+              <BitbucketPullRequestCard key={pr.id} pullRequest={pr} />
+            ))}
+            {pullRequestsByStatus.REVIEW_IN_PROGRESS.length === 0 && (
+              <Typography variant="body2" color="textSecondary" align="center">
+                No pull requests in review
+              </Typography>
+            )}
+          </Grid>
+          
+          {/* Merged/Approved Column */}
+          <Grid item xs={12} md={4} className={classes.statusColumn}>
+            <Paper elevation={0} className={`${classes.columnHeader} ${classes.mergedHeader}`}>
+              <Typography variant="subtitle1">
+                Merged/Approved ({pullRequestsByStatus.MERGED.length + pullRequestsByStatus.APPROVED.length})
+              </Typography>
+            </Paper>
+            {[...pullRequestsByStatus.MERGED, ...pullRequestsByStatus.APPROVED].map(pr => (
+              <BitbucketPullRequestCard key={pr.id} pullRequest={pr} />
+            ))}
+            {(pullRequestsByStatus.MERGED.length + pullRequestsByStatus.APPROVED.length) === 0 && (
+              <Typography variant="body2" color="textSecondary" align="center">
+                No merged or approved pull requests
+              </Typography>
+            )}
+          </Grid>
         </Grid>
-        
-        {/* In Review Column */}
-        <Grid item xs={12} md={4} className={classes.statusColumn}>
-          <Paper elevation={0} className={`${classes.columnHeader} ${classes.reviewInProgressHeader}`}>
-            <Typography variant="subtitle1">
-              In Review ({pullRequestsByStatus.REVIEW_IN_PROGRESS.length})
-            </Typography>
-          </Paper>
-          {pullRequestsByStatus.REVIEW_IN_PROGRESS.map(pr => (
-            <BitbucketPullRequestCard key={pr.id} pullRequest={pr} />
-          ))}
-          {pullRequestsByStatus.REVIEW_IN_PROGRESS.length === 0 && (
-            <Typography variant="body2" color="textSecondary" align="center">
-              No pull requests in review
-            </Typography>
-          )}
-        </Grid>
-        
-        {/* Merged/Approved Column */}
-        <Grid item xs={12} md={4} className={classes.statusColumn}>
-          <Paper elevation={0} className={`${classes.columnHeader} ${classes.mergedHeader}`}>
-            <Typography variant="subtitle1">
-              Merged/Approved ({pullRequestsByStatus.MERGED.length + pullRequestsByStatus.APPROVED.length})
-            </Typography>
-          </Paper>
-          {[...pullRequestsByStatus.MERGED, ...pullRequestsByStatus.APPROVED].map(pr => (
-            <BitbucketPullRequestCard key={pr.id} pullRequest={pr} />
-          ))}
-          {(pullRequestsByStatus.MERGED.length + pullRequestsByStatus.APPROVED.length) === 0 && (
-            <Typography variant="body2" color="textSecondary" align="center">
-              No merged or approved pull requests
-            </Typography>
-          )}
-        </Grid>
-      </Grid>
+      )}
     </InfoCard>
   );
 }; 

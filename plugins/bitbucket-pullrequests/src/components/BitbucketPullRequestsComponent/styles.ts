@@ -171,4 +171,20 @@ export const useStyles = makeStyles(theme => ({
     color: 'white',
     zIndex: 1,
   },
+  loadingContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: theme.spacing(6),
+  },
+  loadingText: {
+    marginTop: theme.spacing(2),
+    color: theme.palette.text.secondary,
+  },
+  skeletonCard: {
+    height: 320,
+    marginBottom: theme.spacing(2),
+    borderRadius: theme.shape.borderRadius,
+  },
 })); 
