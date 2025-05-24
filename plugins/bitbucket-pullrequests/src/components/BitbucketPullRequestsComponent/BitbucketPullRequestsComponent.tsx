@@ -15,6 +15,7 @@ import { InfoCard, Progress, ResponseErrorPanel } from '@backstage/core-componen
 import Skeleton from '@material-ui/lab/Skeleton';
 import useAsync from 'react-use/lib/useAsync';
 import { useEntity } from '@backstage/plugin-catalog-react';
+import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import { useStyles } from './styles';
 import { BitbucketPullRequest, BitbucketResponse, PullRequestStatus } from '../../types/BitbucketPullRequest';
 import { determinePullRequestStatus, formatRelativeTime } from '../../utils/pullRequestUtils';
@@ -23,481 +24,53 @@ import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import CheckIcon from '@material-ui/icons/Check';
 import WarningIcon from '@material-ui/icons/Warning';
 
-// In a real implementation, this would fetch from the Bitbucket API
-const fetchPullRequests = async (): Promise<BitbucketPullRequest[]> => {
-  // This would be replaced with actual API calls to Bitbucket
-  return new Promise(resolve => {
-    // Simulated API response
-    const response: BitbucketResponse = {
-      "size": 7,
-      "limit": 100,
-      "isLastPage": true,
-      "values": [
-        {
-          "id": 101,
-          "version": 3,
-          "title": "Feature: Add login page",
-          "description": "This PR adds a new login page with authentication logic.",
-          "state": "MERGED",
-          "open": false,
-          "closed": true,
-          "createdDate": 1672608000000,
-          "updatedDate": 1672700000000,
-          "fromRef": {
-            "id": "refs/heads/feature/login-page",
-            "displayId": "feature/login-page",
-            "latestCommit": "a1b2c3d4e5",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "toRef": {
-            "id": "refs/heads/develop",
-            "displayId": "develop",
-            "latestCommit": "f6g7h8i9j0",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "locked": false,
-          "author": {
-            "user": {
-              "name": "johndoe",
-              "emailAddress": "johndoe@example.com",
-              "displayName": "John Doe",
-              "active": true,
-              "slug": "johndoe",
-              "type": "NORMAL"
-            },
-            "role": "AUTHOR",
-            "approved": true,
-            "status": "APPROVED"
-          },
-          "reviewers": [
-            {
-              "user": {
-                "name": "janedoe",
-                "displayName": "Jane Doe",
-                "active": true
-              },
-              "role": "REVIEWER",
-              "approved": true,
-              "status": "APPROVED"
-            }
-          ],
-          "participants": [],
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/projects/PRJ/repos/my-repo/pull-requests/101"
-              }
-            ]
-          }
-        },
-        {
-          "id": 102,
-          "version": 1,
-          "title": "Fix: typo in README",
-          "description": "Corrected a small typo in the README file.",
-          "state": "DECLINED",
-          "open": false,
-          "closed": true,
-          "createdDate": 1672800000000,
-          "updatedDate": 1672850000000,
-          "fromRef": {
-            "id": "refs/heads/fix/readme-typo",
-            "displayId": "fix/readme-typo",
-            "latestCommit": "b2c3d4e5f6",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "toRef": {
-            "id": "refs/heads/develop",
-            "displayId": "develop",
-            "latestCommit": "c7d8e9f0g1",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "locked": false,
-          "author": {
-            "user": {
-              "name": "janedoe",
-              "displayName": "Jane Doe",
-              "active": true
-            },
-            "role": "AUTHOR",
-            "approved": false,
-            "status": "UNAPPROVED"
-          },
-          "reviewers": [],
-          "participants": [],
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/projects/PRJ/repos/my-repo/pull-requests/102"
-              }
-            ]
-          }
-        },
-        {
-          "id": 103,
-          "version": 2,
-          "title": "Major update to authentication system",
-          "description": "Implements OAuth2 and SAML integrations with multiple identity providers",
-          "state": "OPEN",
-          "open": true,
-          "closed": false,
-          "createdDate": 1672900000000,
-          "updatedDate": 1672950000000,
-          "fromRef": {
-            "id": "refs/heads/feature/authentication-system-refactoring-with-oauth-and-saml-support",
-            "displayId": "feature/authentication-system-refactoring-with-oauth-and-saml-support",
-            "latestCommit": "d5e6f7g8h9",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "toRef": {
-            "id": "refs/heads/release/2023-q2-security-improvements",
-            "displayId": "release/2023-q2-security-improvements",
-            "latestCommit": "i9j0k1l2m3",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "locked": false,
-          "author": {
-            "user": {
-              "name": "securitydev",
-              "displayName": "Security Developer",
-              "active": true
-            },
-            "role": "AUTHOR",
-            "approved": false,
-            "status": "UNAPPROVED"
-          },
-          "reviewers": [
-            {
-              "user": {
-                "name": "securitylead",
-                "displayName": "Security Team Lead",
-                "active": true
-              },
-              "role": "REVIEWER",
-              "approved": false,
-              "status": "NEEDS_WORK"
-            },
-            {
-              "user": {
-                "name": "cto",
-                "displayName": "Chief Technology Officer",
-                "active": true
-              },
-              "role": "REVIEWER",
-              "approved": false,
-              "status": "UNAPPROVED"
-            }
-          ],
-          "participants": [],
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/projects/PRJ/repos/my-repo/pull-requests/103"
-              }
-            ]
-          }
-        },
-        {
-          "id": 104,
-          "version": 1,
-          "title": "Feature: Add dark theme support",
-          "description": "Adds dark theme support with automatic system preference detection and manual toggle option in user settings.",
-          "state": "OPEN",
-          "open": true,
-          "closed": false,
-          "createdDate": 1673000000000,
-          "updatedDate": 1673050000000,
-          "fromRef": {
-            "id": "refs/heads/feature/dark-theme",
-            "displayId": "feature/dark-theme",
-            "latestCommit": "f1e2d3c4b5",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "toRef": {
-            "id": "refs/heads/develop",
-            "displayId": "develop",
-            "latestCommit": "a6b7c8d9e0",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "locked": false,
-          "author": {
-            "user": {
-              "name": "uidesigner",
-              "displayName": "UI Designer",
-              "active": true
-            },
-            "role": "AUTHOR",
-            "approved": false,
-            "status": "UNAPPROVED"
-          },
-          "reviewers": [
-            {
-              "user": {
-                "name": "frontenddev",
-                "displayName": "Frontend Developer",
-                "active": true
-              },
-              "role": "REVIEWER",
-              "approved": false,
-              "status": "UNAPPROVED"
-            }
-          ],
-          "participants": [],
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/projects/PRJ/repos/my-repo/pull-requests/104"
-              }
-            ]
-          }
-        },
-        {
-          "id": 105,
-          "version": 1,
-          "title": "Feature: Implement user notifications",
-          "description": "Adds a notification system for users with real-time updates using WebSockets and a notifications center.",
-          "state": "OPEN",
-          "open": true,
-          "closed": false,
-          "createdDate": 1673100000000,
-          "updatedDate": 1673150000000,
-          "fromRef": {
-            "id": "refs/heads/feature/notification-system",
-            "displayId": "feature/notification-system",
-            "latestCommit": "g1h2i3j4k5",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "toRef": {
-            "id": "refs/heads/develop",
-            "displayId": "develop",
-            "latestCommit": "l6m7n8o9p0",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "locked": false,
-          "author": {
-            "user": {
-              "name": "backenddev",
-              "displayName": "Backend Developer",
-              "active": true
-            },
-            "role": "AUTHOR",
-            "approved": false,
-            "status": "UNAPPROVED"
-          },
-          "reviewers": [],
-          "participants": [],
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/projects/PRJ/repos/my-repo/pull-requests/105"
-              }
-            ]
-          }
-        },
-        {
-          "id": 106,
-          "version": 1,
-          "title": "Fix: Mobile layout issues",
-          "description": "Fixes responsive design issues on mobile devices including navigation menu and form input fields.",
-          "state": "OPEN",
-          "open": true,
-          "closed": false,
-          "createdDate": 1673200000000,
-          "updatedDate": 1673250000000,
-          "fromRef": {
-            "id": "refs/heads/fix/mobile-layout",
-            "displayId": "fix/mobile-layout",
-            "latestCommit": "q1r2s3t4u5",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "toRef": {
-            "id": "refs/heads/develop",
-            "displayId": "develop",
-            "latestCommit": "v6w7x8y9z0",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "locked": false,
-          "author": {
-            "user": {
-              "name": "mobiledeveloper",
-              "displayName": "Mobile Developer",
-              "active": true
-            },
-            "role": "AUTHOR",
-            "approved": false,
-            "status": "UNAPPROVED"
-          },
-          "reviewers": [
-            {
-              "user": {
-                "name": "uidesigner",
-                "displayName": "UI Designer",
-                "active": true
-              },
-              "role": "REVIEWER",
-              "approved": false,
-              "status": "UNAPPROVED"
-            }
-          ],
-          "participants": [],
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/projects/PRJ/repos/my-repo/pull-requests/106"
-              }
-            ]
-          }
-        },
-        {
-          "id": 107,
-          "version": 1,
-          "title": "Feature: Add API documentation",
-          "description": "Adds Swagger/OpenAPI documentation for the REST APIs with interactive testing functionality.",
-          "state": "OPEN",
-          "open": true,
-          "closed": false,
-          "createdDate": 1673300000000,
-          "updatedDate": 1673350000000,
-          "fromRef": {
-            "id": "refs/heads/feature/api-docs",
-            "displayId": "feature/api-docs",
-            "latestCommit": "a1b2c3d4e5",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "toRef": {
-            "id": "refs/heads/develop",
-            "displayId": "develop",
-            "latestCommit": "f6g7h8i9j0",
-            "repository": {
-              "slug": "my-repo",
-              "name": null,
-              "project": {
-                "key": "PRJ"
-              }
-            }
-          },
-          "locked": false,
-          "author": {
-            "user": {
-              "name": "apideveloper",
-              "displayName": "API Developer",
-              "active": true
-            },
-            "role": "AUTHOR",
-            "approved": false,
-            "status": "UNAPPROVED"
-          },
-          "reviewers": [
-            {
-              "user": {
-                "name": "techlead",
-                "displayName": "Tech Lead",
-                "active": true
-              },
-              "role": "REVIEWER",
-              "approved": false,
-              "status": "UNAPPROVED"
-            }
-          ],
-          "participants": [],
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/projects/PRJ/repos/my-repo/pull-requests/107"
-              }
-            ]
-          }
-        }
-      ],
-      "start": 0
-    };
-    
-    setTimeout(() => {
-      resolve(response.values);
-    }, 1000);
-  });
+// Function to fetch pull requests from Bitbucket API
+const fetchBitbucketPullRequests = async (
+  baseUrl: string,
+  projectKey?: string,
+  repoSlug?: string,
+  token?: string,
+): Promise<BitbucketPullRequest[]> => {
+  if (!projectKey || !repoSlug) {
+    throw new Error('Project key and repository slug are required');
+  }
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const url = `${baseUrl}/rest/api/1.0/projects/${projectKey}/repos/${repoSlug}/pull-requests?state=ALL&limit=100`;
+  
+  const response = await fetch(url, { headers });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch pull requests: ${response.statusText}`);
+  }
+  
+  const data: BitbucketResponse = await response.json();
+  return data.values;
 };
 
-type BitbucketPullRequestCardProps = {
-  pullRequest: BitbucketPullRequest;
+// Loading skeleton component for pull request cards
+const PullRequestSkeleton = () => {
+  const classes = useStyles();
+  return (
+    <Card className={classes.skeletonCard} variant="outlined">
+      <CardContent>
+        <Skeleton variant="text" width="80%" height={32} />
+        <Skeleton variant="text" width="40%" height={24} style={{ marginTop: 8, marginBottom: 16 }} />
+        <Skeleton variant="rect" width="100%" height={100} style={{ marginBottom: 16 }} />
+        <Box display="flex" alignItems="center">
+          <Skeleton variant="circle" width={32} height={32} style={{ marginRight: 8 }} />
+          <Skeleton variant="text" width="40%" height={24} />
+        </Box>
+      </CardContent>
+    </Card>
+  );
 };
 
 // Create a simple user avatar component that doesn't rely on external services
@@ -544,7 +117,7 @@ const UserAvatar = ({ name, size = 32 }: { name: string; size?: number }) => {
   );
 };
 
-export const BitbucketPullRequestCard = ({ pullRequest }: BitbucketPullRequestCardProps) => {
+export const BitbucketPullRequestCard = ({ pullRequest }: { pullRequest: BitbucketPullRequest }) => {
   const classes = useStyles();
   const status = determinePullRequestStatus(pullRequest);
 
@@ -678,30 +251,30 @@ export const BitbucketPullRequestCard = ({ pullRequest }: BitbucketPullRequestCa
   );
 };
 
-// Loading skeleton component for pull request cards
-const PullRequestSkeleton = () => {
-  const classes = useStyles();
-  return (
-    <Card className={classes.skeletonCard} variant="outlined">
-      <CardContent>
-        <Skeleton variant="text" width="80%" height={32} />
-        <Skeleton variant="text" width="40%" height={24} style={{ marginTop: 8, marginBottom: 16 }} />
-        <Skeleton variant="rect" width="100%" height={100} style={{ marginBottom: 16 }} />
-        <Box display="flex" alignItems="center">
-          <Skeleton variant="circle" width={32} height={32} style={{ marginRight: 8 }} />
-          <Skeleton variant="text" width="40%" height={24} />
-        </Box>
-      </CardContent>
-    </Card>
-  );
-};
-
 export const BitbucketPullRequestsComponent = () => {
   const { entity } = useEntity();
   const classes = useStyles();
+  const config = useApi(configApiRef);
   
-  // In a real implementation, you would use the entity to fetch relevant pull requests
-  const { value, loading, error } = useAsync(fetchPullRequests);
+  // Extract Bitbucket details from the entity annotations
+  const bitbucketBaseUrl = config.getOptionalString('bitbucket.baseUrl') || 'https://bitbucket.org';
+  const bitbucketToken = config.getOptionalString('bitbucket.token');
+  
+  const projectKey = entity.metadata.annotations?.['bitbucket.org/project-key'] || 
+                    entity.metadata.annotations?.['backstage.io/managed-by-location']?.split(':')[1]?.split('/')[0];
+                    
+  const repoSlug = entity.metadata.annotations?.['bitbucket.org/repository-slug'] || 
+                  entity.metadata.name;
+  
+  // Fetch pull requests from Bitbucket API
+  const { value, loading, error } = useAsync(async () => {
+    return await fetchBitbucketPullRequests(
+      bitbucketBaseUrl,
+      projectKey,
+      repoSlug,
+      bitbucketToken
+    );
+  }, [bitbucketBaseUrl, projectKey, repoSlug, bitbucketToken]);
 
   if (error) {
     return <ResponseErrorPanel error={error} />;
