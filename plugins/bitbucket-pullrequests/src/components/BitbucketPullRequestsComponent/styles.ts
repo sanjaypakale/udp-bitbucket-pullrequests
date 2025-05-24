@@ -183,8 +183,17 @@ export const useStyles = makeStyles(theme => ({
     color: theme.palette.text.secondary,
   },
   skeletonCard: {
-    height: 320,
-    marginBottom: theme.spacing(2),
-    borderRadius: theme.shape.borderRadius,
+    margin: theme.spacing(2, 0),
+    minHeight: 250,
+  },
+  errorContainer: {
+    padding: theme.spacing(3),
+    margin: theme.spacing(2),
+    textAlign: 'center',
+  },
+  emptyContainer: {
+    padding: theme.spacing(5),
+    margin: theme.spacing(2),
+    textAlign: 'center',
   },
 })); 

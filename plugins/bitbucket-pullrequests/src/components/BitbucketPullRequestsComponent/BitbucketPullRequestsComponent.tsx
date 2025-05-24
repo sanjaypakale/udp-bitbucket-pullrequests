@@ -32,27 +32,33 @@ const fetchBitbucketPullRequests = async (
   token?: string,
 ): Promise<BitbucketPullRequest[]> => {
   if (!projectKey || !repoSlug) {
-    throw new Error('Project key and repository slug are required');
+    return []; // Return empty array instead of throwing error
   }
 
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
+  try {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
 
-  const url = `${baseUrl}/rest/api/1.0/projects/${projectKey}/repos/${repoSlug}/pull-requests?state=ALL&limit=100`;
-  
-  const response = await fetch(url, { headers });
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch pull requests: ${response.statusText}`);
+    const url = `${baseUrl}/rest/api/1.0/projects/${projectKey}/repos/${repoSlug}/pull-requests?state=ALL&limit=100`;
+    
+    const response = await fetch(url, { headers });
+    
+    if (!response.ok) {
+      console.error(`Failed to fetch pull requests: ${response.statusText}`);
+      return []; // Return empty array on error
+    }
+    
+    const data: BitbucketResponse = await response.json();
+    return data.values || []; // Handle case where values might be null or undefined
+  } catch (error) {
+    console.error('Error fetching pull requests:', error);
+    return []; // Return empty array on any exception
   }
-  
-  const data: BitbucketResponse = await response.json();
-  return data.values;
 };
 
 // Loading skeleton component for pull request cards
@@ -302,8 +308,23 @@ export const BitbucketPullRequestsComponent = () => {
     );
   }, [bitbucketBaseUrl, projectKey, repoSlug, bitbucketToken]);
 
+  // Custom error message component
+  const ErrorMessage = () => (
+    <Paper className={classes.errorContainer}>
+      <Typography variant="h6" color="error">
+        Unable to load pull requests
+      </Typography>
+      <Typography variant="body2">
+        Could not connect to Bitbucket or no pull requests are available for this repository.
+      </Typography>
+      <Typography variant="body2">
+        Please check your Bitbucket connection and repository configuration.
+      </Typography>
+    </Paper>
+  );
+
   if (error) {
-    return <ResponseErrorPanel error={error} />;
+    return <ErrorMessage />;
   }
 
   // Group pull requests by status for display
@@ -346,7 +367,9 @@ export const BitbucketPullRequestsComponent = () => {
             </Grid>
           </Grid>
         </>
-      ) : (
+      ) : error ? (
+        <ErrorMessage />
+      ) : value && value.length > 0 ? (
         <Grid container spacing={3}>
           {/* Open PRs Column */}
           <Grid item xs={12} md={4} className={classes.statusColumn}>
@@ -399,6 +422,15 @@ export const BitbucketPullRequestsComponent = () => {
             )}
           </Grid>
         </Grid>
+      ) : (
+        <Paper className={classes.emptyContainer}>
+          <Typography variant="h6">
+            No pull requests found
+          </Typography>
+          <Typography variant="body2">
+            There are currently no pull requests for this repository, or the repository could not be accessed.
+          </Typography>
+        </Paper>
       )}
     </InfoCard>
   );
