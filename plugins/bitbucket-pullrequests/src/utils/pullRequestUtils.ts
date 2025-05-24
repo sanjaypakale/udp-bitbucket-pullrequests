@@ -11,20 +11,24 @@ export const determinePullRequestStatus = (pr: BitbucketPullRequest): PullReques
   
   // For open PRs, check review status
   if (pr.open) {
-    // If at least one reviewer has approved
-    const hasApprovals = pr.reviewers.some(reviewer => reviewer.approved);
-    
-    // If there are reviewers but no approvals yet
-    if (pr.reviewers.length > 0 && !hasApprovals) {
-      return 'REVIEW_IN_PROGRESS';
-    }
-    
     // If all reviewers have approved
     const allApproved = pr.reviewers.length > 0 && 
       pr.reviewers.every(reviewer => reviewer.approved);
     
     if (allApproved) {
       return 'APPROVED';
+    }
+    
+    // If at least one reviewer has approved but not all, it's in review progress
+    const hasAtLeastOneApproval = pr.reviewers.some(reviewer => reviewer.approved);
+    
+    if (hasAtLeastOneApproval) {
+      return 'REVIEW_IN_PROGRESS';
+    }
+    
+    // If there are reviewers but no approvals yet
+    if (pr.reviewers.length > 0) {
+      return 'OPEN';
     }
     
     // Default for open PRs with no reviewers
