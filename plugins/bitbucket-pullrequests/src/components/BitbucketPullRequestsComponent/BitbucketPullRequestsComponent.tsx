@@ -257,17 +257,43 @@ export const BitbucketPullRequestsComponent = () => {
   const config = useApi(configApiRef);
   
   // Extract Bitbucket details from the entity annotations
-  const bitbucketBaseUrl = config.getOptionalString('bitbucket.baseUrl') || 'https://bitbucket.org';
+  let bitbucketBaseUrl = config.getOptionalString('bitbucket.baseUrl');
   const bitbucketToken = config.getOptionalString('bitbucket.token');
   
-  const projectKey = entity.metadata.annotations?.['bitbucket.org/project-key'] || 
-                    entity.metadata.annotations?.['backstage.io/managed-by-location']?.split(':')[1]?.split('/')[0];
-                    
-  const repoSlug = entity.metadata.annotations?.['bitbucket.org/repository-slug'] || 
-                  entity.metadata.name;
+  // Extract project key, repo slug and base URL from source-location annotation
+  let projectKey: string | undefined;
+  let repoSlug: string | undefined;
+  
+  const sourceLocation = entity.metadata.annotations?.['backstage.io/source-location'];
+  
+  if (sourceLocation && sourceLocation.startsWith('url:')) {
+    // Extract from url:https://bitbucket.example.com/projects/<projectname>/repos/<reponame>
+    const url = sourceLocation.substring(4); // Remove 'url:' prefix
+    
+    // Extract the base URL (everything before /projects)
+    const projectsIndex = url.indexOf('/projects/');
+    if (projectsIndex > 0) {
+      // Set the base URL if not already set
+      bitbucketBaseUrl = bitbucketBaseUrl || url.substring(0, projectsIndex);
+      
+      // Extract project and repo from the URL pattern
+      const matches = url.match(/projects\/([^\/]+)\/repos\/([^\/]+)/);
+      if (matches && matches.length === 3) {
+        projectKey = matches[1];
+        repoSlug = matches[2];
+      }
+    }
+  }
+  
+  // Default Bitbucket base URL if not found anywhere else
+  bitbucketBaseUrl = bitbucketBaseUrl || 'https://bitbucket.org';
   
   // Fetch pull requests from Bitbucket API
   const { value, loading, error } = useAsync(async () => {
+    if (!projectKey || !repoSlug) {
+      return [];
+    }
+    
     return await fetchBitbucketPullRequests(
       bitbucketBaseUrl,
       projectKey,
