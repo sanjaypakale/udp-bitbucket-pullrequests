@@ -58,6 +58,8 @@ import {
   isKubernetesAvailable,
 } from '@backstage/plugin-kubernetes';
 
+import { EntityBitbucketPullRequestsContent } from '@internal/plugin-bitbucket-pullrequests';
+
 const techdocsContent = (
   <EntityTechdocsContent>
     <TechDocsAddons>
@@ -186,6 +188,10 @@ const serviceEntityPage = (
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
     </EntityLayout.Route>
+
+    <EntityLayout.Route path="/bitbucket-prs" title="Bitbucket Pull Requests">
+      <EntityBitbucketPullRequestsContent />
+    </EntityLayout.Route>
   </EntityLayout>
 );
 
@@ -221,6 +227,10 @@ const websiteEntityPage = (
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
     </EntityLayout.Route>
+
+    <EntityLayout.Route path="/bitbucket-prs" title="Bitbucket Pull Requests">
+      <EntityBitbucketPullRequestsContent />
+    </EntityLayout.Route>
   </EntityLayout>
 );
 
@@ -239,6 +249,10 @@ const defaultEntityPage = (
 
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/bitbucket-prs" title="Bitbucket Pull Requests">
+      <EntityBitbucketPullRequestsContent />
     </EntityLayout.Route>
   </EntityLayout>
 );
