@@ -16,123 +16,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import { useStyles } from './styles';
-import { generateAvatarColor, getUserInitials, generateDummyUsers, extractBitbucketInfo, fetchBitbucketAPI } from './utils';
-
-// Sample data for branch restrictions
-const sampleBranchRestrictions = {
-  size: 5,
-  limit: 25,
-  isLastPage: true,
-  start: 0,
-  values: [
-    {
-      id: 1,
-      type: "read-only",
-      matcher: {
-        id: "refs/heads/main",
-        displayId: "main",
-        type: {
-          id: "BRANCH",
-          name: "Branch"
-        },
-        active: true
-      },
-      users: generateDummyUsers(50), // 50 dummy users for testing
-      groups: [
-        {
-          name: "dev-team"
-        }
-      ],
-      accessKeys: []
-    },
-    {
-      id: 2,
-      type: "fast-forward-only",
-      matcher: {
-        id: "refs/heads/develop",
-        displayId: "develop",
-        type: {
-          id: "BRANCH",
-          name: "Branch"
-        },
-        active: true
-      },
-      users: [],
-      groups: [
-        {
-          name: "release-engineers"
-        }
-      ],
-      accessKeys: []
-    },
-    {
-      id: 3,
-      type: "no-deletes",
-      matcher: {
-        id: "refs/heads/release/*",
-        displayId: "release/*",
-        type: {
-          id: "PATTERN",
-          name: "Pattern"
-        },
-        active: true
-      },
-      users: [],
-      groups: [
-        {
-          name: "qa-team"
-        }
-      ],
-      accessKeys: []
-    },
-    {
-      id: 4,
-      type: "pull-request-only",
-      matcher: {
-        id: "refs/heads/hotfix/*",
-        displayId: "hotfix/*",
-        type: {
-          id: "PATTERN",
-          name: "Pattern"
-        },
-        active: true
-      },
-      users: [],
-      groups: [
-        {
-          name: "dev-leads"
-        }
-      ],
-      accessKeys: []
-    },
-    {
-      id: 5,
-      type: "require-reviewers",
-      matcher: {
-        id: "refs/heads/feature/*",
-        displayId: "feature/*",
-        type: {
-          id: "PATTERN",
-          name: "Pattern"
-        },
-        active: true
-      },
-      users: [
-        {
-          name: "asmith",
-          emailAddress: "asmith@example.com",
-          id: 102,
-          displayName: "Alice Smith",
-          active: true,
-          slug: "asmith",
-          type: "NORMAL"
-        }
-      ],
-      groups: [],
-      accessKeys: []
-    }
-  ]
-};
+import { generateAvatarColor, getUserInitials, extractBitbucketInfo, fetchBitbucketAPI } from './utils';
 
 // Skeleton loader for Branch Restrictions
 const BranchRestrictionsSkeleton = () => {
@@ -178,7 +62,7 @@ const BranchRestrictionsSkeleton = () => {
 export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
   const classes = useStyles();
   const [userSearchTerms, setUserSearchTerms] = useState<Record<number, string>>({});
-  const [branchRestrictionsData, setBranchRestrictionsData] = useState(sampleBranchRestrictions);
+  const [branchRestrictionsData, setBranchRestrictionsData] = useState<any>(null);
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -216,7 +100,6 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
       } catch (error) {
         console.error('Failed to fetch branch restrictions:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to fetch branch restrictions');
-        // Keep using sample data as fallback
       } finally {
         setApiLoading(false);
       }
@@ -274,21 +157,49 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
     return <BranchRestrictionsSkeleton />;
   }
 
+  // Handle case when no data is available
+  if (!branchRestrictionsData || !branchRestrictionsData.values) {
+    return (
+      <Box>
+        <Box className={classes.sectionHeader} mb={3}>
+          <SecurityIcon />
+          <Typography variant="h6" component="h3">
+            Branch Restrictions (0)
+            {apiError && (
+              <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
+                (API Error: {apiError})
+              </Typography>
+            )}
+          </Typography>
+        </Box>
+        <Card className={classes.restrictionCard} elevation={1}>
+          <Box className={classes.restrictionContent}>
+            <Box className={classes.emptyExemptions}>
+              <Typography variant="body2">
+                {apiError ? 'Failed to load branch restrictions' : 'No branch restrictions found'}
+              </Typography>
+            </Box>
+          </Box>
+        </Card>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box className={classes.sectionHeader} mb={3}>
         <SecurityIcon />
         <Typography variant="h6" component="h3">
-          Branch Restrictions ({branchRestrictionsData.size})
+          Branch Restrictions ({branchRestrictionsData.size || 0})
           {apiError && (
             <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
-              (Using fallback data - API Error: {apiError})
+              (API Error: {apiError})
             </Typography>
           )}
         </Typography>
       </Box>
 
-      {branchRestrictionsData.values.map((restriction, index) => {
+      {branchRestrictionsData.values.map((restriction: any, index: number) => {
         const filteredUsers = filterUsers(restriction.users, restriction.id);
         
         return (
@@ -341,7 +252,7 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
                     </Box>
                     <Box className={classes.exemptionsList} style={{ maxHeight: '300px', overflowY: 'auto' }}>
                       {filteredUsers.length > 0 ? (
-                        filteredUsers.map((user, userIndex) => (
+                        filteredUsers.map((user: any, userIndex: number) => (
                           <Box key={userIndex} className={classes.userExemption}>
                             <Avatar 
                               className={classes.userAvatar} 

@@ -18,239 +18,6 @@ import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import { useStyles } from './styles';
 import { generateAvatarColor, getUserInitials, extractBitbucketInfo, fetchBitbucketAPI } from './utils';
 
-// Sample data for default reviewers
-const sampleDefaultReviewers = {
-  values: [
-    {
-      id: 1,
-      repository: {
-        slug: "my-repo",
-        name: "My Repository",
-        project: {
-          key: "PROJ"
-        }
-      },
-      sourceMatcher: {
-        id: "*",
-        displayId: "Any branch",
-        type: {
-          id: "PATTERN",
-          name: "Pattern"
-        },
-        active: true
-      },
-      targetMatcher: {
-        id: "refs/heads/master",
-        displayId: "master",
-        type: {
-          id: "BRANCH",
-          name: "Branch"
-        },
-        active: true
-      },
-      requiredApprovals: 2,
-      reviewers: [
-        {
-          user: {
-            name: "newuser1",
-            emailAddress: "newuser1@example.com",
-            displayName: "New User1",
-            active: true,
-            slug: "newuser1",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "newuser2",
-            emailAddress: "newuser2@example.com",
-            displayName: "New User2",
-            active: true,
-            slug: "newuser2",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "jdoe",
-            emailAddress: "jdoe@example.com",
-            displayName: "John Doe",
-            active: true,
-            slug: "jdoe",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "asmith",
-            emailAddress: "asmith@example.com",
-            displayName: "Alice Smith",
-            active: true,
-            slug: "asmith",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "bwayne",
-            emailAddress: "bwayne@example.com",
-            displayName: "Bruce Wayne",
-            active: true,
-            slug: "bwayne",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "ckent",
-            emailAddress: "ckent@example.com",
-            displayName: "Clark Kent",
-            active: true,
-            slug: "ckent",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "dprince",
-            emailAddress: "dprince@example.com",
-            displayName: "Diana Prince",
-            active: true,
-            slug: "dprince",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "hquinn",
-            emailAddress: "hquinn@example.com",
-            displayName: "Harley Quinn",
-            active: true,
-            slug: "hquinn",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "twayne",
-            emailAddress: "twayne@example.com",
-            displayName: "Tim Wayne",
-            active: true,
-            slug: "twayne",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "pbaker",
-            emailAddress: "pbaker@example.com",
-            displayName: "Peter Baker",
-            active: true,
-            slug: "pbaker",
-            type: "NORMAL"
-          }
-        }
-      ]
-    },
-    {
-      id: 2,
-      repository: {
-        slug: "my-repo",
-        name: "My Repository",
-        project: {
-          key: "PROJ"
-        }
-      },
-      sourceMatcher: {
-        id: "refs/heads/feature/*",
-        displayId: "feature/*",
-        type: {
-          id: "PATTERN",
-          name: "Pattern"
-        },
-        active: true
-      },
-      targetMatcher: {
-        id: "refs/heads/develop",
-        displayId: "develop",
-        type: {
-          id: "BRANCH",
-          name: "Branch"
-        },
-        active: true
-      },
-      requiredApprovals: 1,
-      reviewers: [
-        {
-          user: {
-            name: "jdoe",
-            emailAddress: "jdoe@example.com",
-            displayName: "John Doe",
-            active: true,
-            slug: "jdoe",
-            type: "NORMAL"
-          }
-        }
-      ]
-    },
-    {
-      id: 3,
-      repository: {
-        slug: "my-repo",
-        name: "My Repository",
-        project: {
-          key: "PROJ"
-        }
-      },
-      sourceMatcher: {
-        id: "refs/heads/release/*",
-        displayId: "release/*",
-        type: {
-          id: "PATTERN",
-          name: "Pattern"
-        },
-        active: true
-      },
-      targetMatcher: {
-        id: "refs/heads/main",
-        displayId: "main",
-        type: {
-          id: "BRANCH",
-          name: "Branch"
-        },
-        active: true
-      },
-      requiredApprovals: 3,
-      reviewers: [
-        {
-          user: {
-            name: "asmith",
-            emailAddress: "asmith@example.com",
-            displayName: "Alice Smith",
-            active: true,
-            slug: "asmith",
-            type: "NORMAL"
-          }
-        },
-        {
-          user: {
-            name: "bwayne",
-            emailAddress: "bwayne@example.com",
-            displayName: "Bruce Wayne",
-            active: true,
-            slug: "bwayne",
-            type: "NORMAL"
-          }
-        }
-      ]
-    }
-  ],
-  size: 3,
-  limit: 25,
-  isLastPage: true,
-  start: 0
-};
-
 // Skeleton loader for Default Reviewers
 const DefaultReviewersSkeleton = () => {
   const classes = useStyles();
@@ -313,7 +80,7 @@ const DefaultReviewersSkeleton = () => {
 export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
   const classes = useStyles();
   const [reviewerSearchTerms, setReviewerSearchTerms] = useState<Record<number, string>>({});
-  const [defaultReviewersData, setDefaultReviewersData] = useState(sampleDefaultReviewers);
+  const [defaultReviewersData, setDefaultReviewersData] = useState<any>(null);
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -351,7 +118,6 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
       } catch (error) {
         console.error('Failed to fetch default reviewers:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to fetch default reviewers');
-        // Keep using sample data as fallback
       } finally {
         setApiLoading(false);
       }
@@ -407,21 +173,49 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
     return <DefaultReviewersSkeleton />;
   }
 
+  // Handle case when no data is available
+  if (!defaultReviewersData || !defaultReviewersData.values) {
+    return (
+      <Box>
+        <Box className={classes.sectionHeader} mb={3}>
+          <RateReviewIcon />
+          <Typography variant="h6" component="h3">
+            Default Reviewers (0)
+            {apiError && (
+              <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
+                (API Error: {apiError})
+              </Typography>
+            )}
+          </Typography>
+        </Box>
+        <Card className={classes.reviewerCard} elevation={1}>
+          <Box className={classes.reviewerContent}>
+            <Box className={classes.emptyExemptions}>
+              <Typography variant="body2">
+                {apiError ? 'Failed to load default reviewers' : 'No default reviewers found'}
+              </Typography>
+            </Box>
+          </Box>
+        </Card>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box className={classes.sectionHeader} mb={3}>
         <RateReviewIcon />
         <Typography variant="h6" component="h3">
-          Default Reviewers ({defaultReviewersData.size})
+          Default Reviewers ({defaultReviewersData.size || 0})
           {apiError && (
             <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
-              (Using fallback data - API Error: {apiError})
+              (API Error: {apiError})
             </Typography>
           )}
         </Typography>
       </Box>
 
-      {defaultReviewersData.values.map((reviewerConfig, index) => (
+      {defaultReviewersData.values.map((reviewerConfig: any, index: number) => (
         <Card key={reviewerConfig.id} className={classes.reviewerCard} elevation={1}>
           <Box className={classes.reviewerHeader}>
             <Box className={classes.reviewerTitleRow}>
@@ -505,7 +299,7 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
               }}
             >
               {filterReviewers(reviewerConfig.reviewers, reviewerConfig.id).length > 0 ? (
-                filterReviewers(reviewerConfig.reviewers, reviewerConfig.id).map((reviewer, reviewerIndex) => (
+                filterReviewers(reviewerConfig.reviewers, reviewerConfig.id).map((reviewer: any, reviewerIndex: number) => (
                   <Box key={reviewerIndex} className={classes.reviewerItem}>
                     <Box className={classes.reviewerInfo}>
                       <Avatar 
