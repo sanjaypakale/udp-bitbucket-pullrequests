@@ -18,179 +18,6 @@ import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import { useStyles } from './styles';
 import { generateAvatarColor, getUserInitials, extractBitbucketInfo, fetchBitbucketAPI } from './utils';
 
-// Sample data for default reviewers with new structure
-const sampleDefaultReviewers = [
-  {
-    "id": 753,
-    "scope": {
-      "type": "REPOSITORY",
-      "resourceId": 123456
-    },
-    "sourceRefMatcher": {
-      "id": "ANY_REF_MATCHER_ID",
-      "displayId": "ANY_REF_MATCHER_ID",
-      "type": {
-        "id": "ANY_REF",
-        "name": "Any branch"
-      },
-      "active": true
-    },
-    "targetRefMatcher": {
-      "id": "refs/heads/master",
-      "displayId": "master",
-      "type": {
-        "id": "BRANCH",
-        "name": "Branch"
-      },
-      "active": true
-    },
-    "reviewers": [
-      {
-        "user": {
-          "name": "testuser",
-          "displayName": "Test User",
-          "emailAddress": "testuser@example.com",
-          "id": 123456,
-          "type": "NORMAL",
-          "slug": "testuser",
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/api/2.0/users/testuser"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "user": {
-          "name": "jdoe",
-          "displayName": "John Doe",
-          "emailAddress": "john.doe@example.com",
-          "id": 123457,
-          "type": "NORMAL",
-          "slug": "jdoe",
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/api/2.0/users/jdoe"
-              }
-            ]
-          }
-        }
-      }
-    ],
-    "requiredApprovals": 1
-  },
-  {
-    "id": 754,
-    "scope": {
-      "type": "REPOSITORY",
-      "resourceId": 123456
-    },
-    "sourceRefMatcher": {
-      "id": "feature/*",
-      "displayId": "feature/*",
-      "type": {
-        "id": "PATTERN",
-        "name": "Pattern"
-      },
-      "active": true
-    },
-    "targetRefMatcher": {
-      "id": "release/*",
-      "displayId": "release/*",
-      "type": {
-        "id": "PATTERN",
-        "name": "Pattern"
-      },
-      "active": true
-    },
-    "reviewers": [
-      {
-        "user": {
-          "name": "asmith",
-          "displayName": "Alice Smith",
-          "emailAddress": "alice.smith@example.com",
-          "id": 123458,
-          "type": "NORMAL",
-          "slug": "asmith",
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/api/2.0/users/asmith"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "user": {
-          "name": "bwayne",
-          "displayName": "Bruce Wayne",
-          "emailAddress": "bruce.wayne@example.com",
-          "id": 123459,
-          "type": "NORMAL",
-          "slug": "bwayne",
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/api/2.0/users/bwayne"
-              }
-            ]
-          }
-        }
-      }
-    ],
-    "requiredApprovals": 2
-  },
-  {
-    "id": 755,
-    "scope": {
-      "type": "REPOSITORY",
-      "resourceId": 123456
-    },
-    "sourceRefMatcher": {
-      "id": "refs/heads/develop",
-      "displayId": "develop",
-      "type": {
-        "id": "BRANCH",
-        "name": "Branch"
-      },
-      "active": true
-    },
-    "targetRefMatcher": {
-      "id": "refs/heads/main",
-      "displayId": "main",
-      "type": {
-        "id": "BRANCH",
-        "name": "Branch"
-      },
-      "active": true
-    },
-    "reviewers": [
-      {
-        "user": {
-          "name": "ckent",
-          "displayName": "Clark Kent",
-          "emailAddress": "clark.kent@example.com",
-          "id": 123460,
-          "type": "NORMAL",
-          "slug": "ckent",
-          "links": {
-            "self": [
-              {
-                "href": "https://bitbucket.org/api/2.0/users/ckent"
-              }
-            ]
-          }
-        }
-      }
-    ],
-    "requiredApprovals": 1
-  }
-];
-
 // Skeleton loader for Default Reviewers
 const DefaultReviewersSkeleton = () => {
   const classes = useStyles();
@@ -253,7 +80,7 @@ const DefaultReviewersSkeleton = () => {
 export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
   const classes = useStyles();
   const [reviewerSearchTerms, setReviewerSearchTerms] = useState<Record<number, string>>({});
-  const [defaultReviewersData, setDefaultReviewersData] = useState<any>(sampleDefaultReviewers);
+  const [defaultReviewersData, setDefaultReviewersData] = useState<any>(null);
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -291,7 +118,6 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
       } catch (error) {
         console.error('Failed to fetch default reviewers:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to fetch default reviewers');
-        // Keep using sample data as fallback
       } finally {
         setApiLoading(false);
       }
@@ -406,7 +232,7 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
           Default Reviewers ({defaultReviewersData.length || 0})
           {apiError && (
             <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
-              (Using fallback data - API Error: {apiError})
+              (API Error: {apiError})
             </Typography>
           )}
         </Typography>
