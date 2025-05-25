@@ -18,6 +18,179 @@ import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import { useStyles } from './styles';
 import { generateAvatarColor, getUserInitials, extractBitbucketInfo, fetchBitbucketAPI } from './utils';
 
+// Sample data for default reviewers with new structure
+const sampleDefaultReviewers = [
+  {
+    "id": 753,
+    "scope": {
+      "type": "REPOSITORY",
+      "resourceId": 123456
+    },
+    "sourceRefMatcher": {
+      "id": "ANY_REF_MATCHER_ID",
+      "displayId": "ANY_REF_MATCHER_ID",
+      "type": {
+        "id": "ANY_REF",
+        "name": "Any branch"
+      },
+      "active": true
+    },
+    "targetRefMatcher": {
+      "id": "refs/heads/master",
+      "displayId": "master",
+      "type": {
+        "id": "BRANCH",
+        "name": "Branch"
+      },
+      "active": true
+    },
+    "reviewers": [
+      {
+        "user": {
+          "name": "testuser",
+          "displayName": "Test User",
+          "emailAddress": "testuser@example.com",
+          "id": 123456,
+          "type": "NORMAL",
+          "slug": "testuser",
+          "links": {
+            "self": [
+              {
+                "href": "https://bitbucket.org/api/2.0/users/testuser"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "user": {
+          "name": "jdoe",
+          "displayName": "John Doe",
+          "emailAddress": "john.doe@example.com",
+          "id": 123457,
+          "type": "NORMAL",
+          "slug": "jdoe",
+          "links": {
+            "self": [
+              {
+                "href": "https://bitbucket.org/api/2.0/users/jdoe"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "requiredApprovals": 1
+  },
+  {
+    "id": 754,
+    "scope": {
+      "type": "REPOSITORY",
+      "resourceId": 123456
+    },
+    "sourceRefMatcher": {
+      "id": "feature/*",
+      "displayId": "feature/*",
+      "type": {
+        "id": "PATTERN",
+        "name": "Pattern"
+      },
+      "active": true
+    },
+    "targetRefMatcher": {
+      "id": "release/*",
+      "displayId": "release/*",
+      "type": {
+        "id": "PATTERN",
+        "name": "Pattern"
+      },
+      "active": true
+    },
+    "reviewers": [
+      {
+        "user": {
+          "name": "asmith",
+          "displayName": "Alice Smith",
+          "emailAddress": "alice.smith@example.com",
+          "id": 123458,
+          "type": "NORMAL",
+          "slug": "asmith",
+          "links": {
+            "self": [
+              {
+                "href": "https://bitbucket.org/api/2.0/users/asmith"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "user": {
+          "name": "bwayne",
+          "displayName": "Bruce Wayne",
+          "emailAddress": "bruce.wayne@example.com",
+          "id": 123459,
+          "type": "NORMAL",
+          "slug": "bwayne",
+          "links": {
+            "self": [
+              {
+                "href": "https://bitbucket.org/api/2.0/users/bwayne"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "requiredApprovals": 2
+  },
+  {
+    "id": 755,
+    "scope": {
+      "type": "REPOSITORY",
+      "resourceId": 123456
+    },
+    "sourceRefMatcher": {
+      "id": "refs/heads/develop",
+      "displayId": "develop",
+      "type": {
+        "id": "BRANCH",
+        "name": "Branch"
+      },
+      "active": true
+    },
+    "targetRefMatcher": {
+      "id": "refs/heads/main",
+      "displayId": "main",
+      "type": {
+        "id": "BRANCH",
+        "name": "Branch"
+      },
+      "active": true
+    },
+    "reviewers": [
+      {
+        "user": {
+          "name": "ckent",
+          "displayName": "Clark Kent",
+          "emailAddress": "clark.kent@example.com",
+          "id": 123460,
+          "type": "NORMAL",
+          "slug": "ckent",
+          "links": {
+            "self": [
+              {
+                "href": "https://bitbucket.org/api/2.0/users/ckent"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "requiredApprovals": 1
+  }
+];
+
 // Skeleton loader for Default Reviewers
 const DefaultReviewersSkeleton = () => {
   const classes = useStyles();
@@ -80,7 +253,7 @@ const DefaultReviewersSkeleton = () => {
 export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
   const classes = useStyles();
   const [reviewerSearchTerms, setReviewerSearchTerms] = useState<Record<number, string>>({});
-  const [defaultReviewersData, setDefaultReviewersData] = useState<any>(null);
+  const [defaultReviewersData, setDefaultReviewersData] = useState<any>(sampleDefaultReviewers);
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -112,12 +285,13 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
           repoSlug
         );
 
-        if (response && response.values) {
+        if (response && Array.isArray(response)) {
           setDefaultReviewersData(response);
         }
       } catch (error) {
         console.error('Failed to fetch default reviewers:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to fetch default reviewers');
+        // Keep using sample data as fallback
       } finally {
         setApiLoading(false);
       }
@@ -133,6 +307,7 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
     const typeMap = {
       'PATTERN': { class: classes.patternChip, label: 'Pattern' },
       'BRANCH': { class: classes.branchChip, label: 'Branch' },
+      'ANY_REF': { class: classes.sourceTypeChip, label: 'Any Ref' },
       'MODEL_BRANCH': { class: classes.modelBranchChip, label: 'Model Branch' },
     };
 
@@ -148,6 +323,28 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
         className={`${classes.sourceTypeChip} ${config.class}`}
       />
     );
+  };
+
+  // Helper function to get source display value based on type
+  const getSourceDisplayValue = (sourceRefMatcher: any) => {
+    if (!sourceRefMatcher) return 'Unknown';
+    
+    if (sourceRefMatcher.type?.id === 'PATTERN') {
+      return sourceRefMatcher.displayId || 'Unknown Pattern';
+    } else {
+      return sourceRefMatcher.type?.name || 'Unknown Type';
+    }
+  };
+
+  // Helper function to get target display value based on type
+  const getTargetDisplayValue = (targetRefMatcher: any) => {
+    if (!targetRefMatcher) return 'Unknown';
+    
+    if (targetRefMatcher.type?.id === 'PATTERN') {
+      return targetRefMatcher.displayId || 'Unknown Pattern';
+    } else {
+      return targetRefMatcher.type?.name || 'Unknown Type';
+    }
   };
 
   const handleReviewerSearch = (ruleId: number, searchTerm: string) => {
@@ -174,7 +371,7 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
   }
 
   // Handle case when no data is available
-  if (!defaultReviewersData || !defaultReviewersData.values || !Array.isArray(defaultReviewersData.values)) {
+  if (!defaultReviewersData || !Array.isArray(defaultReviewersData)) {
     return (
       <Box>
         <Box className={classes.sectionHeader} mb={3}>
@@ -206,16 +403,16 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
       <Box className={classes.sectionHeader} mb={3}>
         <RateReviewIcon />
         <Typography variant="h6" component="h3">
-          Default Reviewers ({defaultReviewersData.size || defaultReviewersData.values.length || 0})
+          Default Reviewers ({defaultReviewersData.length || 0})
           {apiError && (
             <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
-              (API Error: {apiError})
+              (Using fallback data - API Error: {apiError})
             </Typography>
           )}
         </Typography>
       </Box>
 
-      {defaultReviewersData.values.map((reviewerConfig: any, index: number) => (
+      {defaultReviewersData.map((reviewerConfig: any, index: number) => (
         <Card key={reviewerConfig.id || index} className={classes.reviewerCard} elevation={1}>
           <Box className={classes.reviewerHeader}>
             <Box className={classes.reviewerTitleRow}>
@@ -245,9 +442,9 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
                   Source
                 </Typography>
                 <Typography className={classes.matcherValue}>
-                  {reviewerConfig.sourceMatcher?.displayId || 'Unknown'}
+                  {getSourceDisplayValue(reviewerConfig.sourceRefMatcher)}
                 </Typography>
-                {getSourceTypeChip(reviewerConfig.sourceMatcher?.type?.id || 'UNKNOWN')}
+                {getSourceTypeChip(reviewerConfig.sourceRefMatcher?.type?.id || 'UNKNOWN')}
               </Box>
               
               <Box display="flex" flexDirection="column" alignItems="center">
@@ -262,9 +459,9 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
                   Target
                 </Typography>
                 <Typography className={classes.matcherValue}>
-                  {reviewerConfig.targetMatcher?.displayId || 'Unknown'}
+                  {getTargetDisplayValue(reviewerConfig.targetRefMatcher)}
                 </Typography>
-                {getSourceTypeChip(reviewerConfig.targetMatcher?.type?.id || 'UNKNOWN')}
+                {getSourceTypeChip(reviewerConfig.targetRefMatcher?.type?.id || 'UNKNOWN')}
               </Box>
             </Box>
 

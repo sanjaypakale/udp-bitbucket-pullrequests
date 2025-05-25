@@ -1,0 +1,100 @@
+[
+    {
+        "id": 753,
+        "scope":{
+            "type": "REPOSITORY",
+            "resourceId": 123456
+        },
+        "sourceRefMatcher": {
+            "id": "ANY_REF_MATCHER_ID",
+            "displayId": "ANY_REF_MATCHER_ID",
+            "type": {
+                "id": "ANY_REF",
+                "name": "Any branch"
+            },
+            "active": true
+        },
+        "targetRefMatcher": {
+            "id": "refs/heads/master",
+            "displayId": "master",
+            "type": {
+                "id": "BRANCH",
+                "name": "Branch"
+            },
+            "active": true
+        },
+        "reviewers": [
+            {
+                "user": {
+                    "name": "testuser",
+                    "displayName": "Test User",
+                    "emailAddress": "sa@gmail.com",
+                    "id": 123456,
+                    "type": "NORMAL",
+                    "slug": "testuser",
+                    "links": {
+                        "self": [
+                            {
+                                "href": "https://bitbucket.org/api/2.0/users/testuser"
+                            }
+                        ]
+                    }
+                    
+                }
+               
+            }
+        ],
+        "requiredApprovals": 1
+
+    },
+    [
+        {
+            "id": 753,
+            "scope":{
+                "type": "REPOSITORY",
+                "resourceId": 123456
+            },
+            "sourceRefMatcher": {
+                "id": "feature/*",
+                "displayId": "feature/*",
+                "type": {
+                    "id": "PATTERN",
+                    "name": "Pattern"
+                },
+                "active": true
+            },
+            "targetRefMatcher": {
+                "id": "release/*",
+                "displayId": "release/*",
+                "type": {
+                    "id": "PATTERN",
+                    "name": "Pattern"
+                },
+                "active": true
+            },
+            "reviewers": [
+                {
+                    "user": {
+                        "name": "testuser",
+                        "displayName": "Test User",
+                        "emailAddress": "sa@gmail.com",
+                        "id": 123456,
+                        "type": "NORMAL",
+                        "slug": "testuser",
+                        "links": {
+                            "self": [
+                                {
+                                    "href": "https://bitbucket.org/api/2.0/users/testuser"
+                                }
+                            ]
+                        }
+                        
+                    }
+                   
+                }
+            ],
+            "requiredApprovals": 2
+    
+        }
+    ]
+]
