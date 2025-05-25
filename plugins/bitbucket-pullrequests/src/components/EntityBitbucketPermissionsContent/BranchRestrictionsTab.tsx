@@ -158,7 +158,7 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
   }
 
   // Handle case when no data is available
-  if (!branchRestrictionsData || !branchRestrictionsData.values) {
+  if (!branchRestrictionsData || !branchRestrictionsData.values || !Array.isArray(branchRestrictionsData.values)) {
     return (
       <Box>
         <Box className={classes.sectionHeader} mb={3}>
@@ -190,7 +190,7 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
       <Box className={classes.sectionHeader} mb={3}>
         <SecurityIcon />
         <Typography variant="h6" component="h3">
-          Branch Restrictions ({branchRestrictionsData.size || 0})
+          Branch Restrictions ({branchRestrictionsData.size || branchRestrictionsData.values.length || 0})
           {apiError && (
             <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
               (API Error: {apiError})
@@ -200,18 +200,18 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
       </Box>
 
       {branchRestrictionsData.values.map((restriction: any, index: number) => {
-        const filteredUsers = filterUsers(restriction.users, restriction.id);
+        const filteredUsers = filterUsers(restriction.users || [], restriction.id);
         
         return (
           <Card key={restriction.id} className={classes.restrictionCard} elevation={1}>
             <Box className={classes.restrictionHeader}>
               <Box className={classes.restrictionTitleRow}>
                 <Typography className={classes.restrictionTitle}>
-                  {restriction.matcher.displayId}
+                  {restriction.matcher?.displayId || 'Unknown'}
                 </Typography>
                 <Box display="flex" alignItems="center">
                   <Chip
-                    label={restriction.matcher.type.name}
+                    label={restriction.matcher?.type?.name || 'Unknown'}
                     size="small"
                     className={classes.matcherTypeChip}
                   />
@@ -225,7 +225,7 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
             <Box className={classes.restrictionContent}>
               <Box className={classes.exemptionsSection}>
                 {/* Users Exemptions */}
-                {restriction.users.length > 0 ? (
+                {restriction.users && restriction.users.length > 0 ? (
                   <Box>
                     <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
                       <Typography className={classes.exemptionsTitle}>
@@ -257,19 +257,19 @@ export const BranchRestrictionsTab = ({ loading }: { loading: boolean }) => {
                             <Avatar 
                               className={classes.userAvatar} 
                               style={{ 
-                                backgroundColor: generateAvatarColor(user.displayName),
+                                backgroundColor: generateAvatarColor(user.displayName || 'Unknown'),
                                 width: 32, 
                                 height: 32 
                               }}
                             >
-                              {getUserInitials(user.displayName)}
+                              {getUserInitials(user.displayName || 'Unknown')}
                             </Avatar>
                             <Box ml={1.5}>
                               <Typography variant="body2" style={{ fontWeight: 'medium' }}>
-                                {user.displayName}
+                                {user.displayName || 'Unknown User'}
                               </Typography>
                               <Typography variant="caption" color="textSecondary">
-                                {user.emailAddress}
+                                {user.emailAddress || 'No email'}
                               </Typography>
                             </Box>
                           </Box>

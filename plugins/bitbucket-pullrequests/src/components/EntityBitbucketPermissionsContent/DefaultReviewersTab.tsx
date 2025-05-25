@@ -163,9 +163,9 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
     
     const searchLower = searchTerm.toLowerCase();
     return reviewers.filter(reviewer => 
-      reviewer.user.displayName.toLowerCase().includes(searchLower) ||
-      reviewer.user.name.toLowerCase().includes(searchLower) ||
-      reviewer.user.emailAddress.toLowerCase().includes(searchLower)
+      reviewer.user?.displayName?.toLowerCase().includes(searchLower) ||
+      reviewer.user?.name?.toLowerCase().includes(searchLower) ||
+      reviewer.user?.emailAddress?.toLowerCase().includes(searchLower)
     );
   };
 
@@ -174,7 +174,7 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
   }
 
   // Handle case when no data is available
-  if (!defaultReviewersData || !defaultReviewersData.values) {
+  if (!defaultReviewersData || !defaultReviewersData.values || !Array.isArray(defaultReviewersData.values)) {
     return (
       <Box>
         <Box className={classes.sectionHeader} mb={3}>
@@ -206,7 +206,7 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
       <Box className={classes.sectionHeader} mb={3}>
         <RateReviewIcon />
         <Typography variant="h6" component="h3">
-          Default Reviewers ({defaultReviewersData.size || 0})
+          Default Reviewers ({defaultReviewersData.size || defaultReviewersData.values.length || 0})
           {apiError && (
             <Typography variant="caption" color="error" style={{ marginLeft: 8 }}>
               (API Error: {apiError})
@@ -216,11 +216,11 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
       </Box>
 
       {defaultReviewersData.values.map((reviewerConfig: any, index: number) => (
-        <Card key={reviewerConfig.id} className={classes.reviewerCard} elevation={1}>
+        <Card key={reviewerConfig.id || index} className={classes.reviewerCard} elevation={1}>
           <Box className={classes.reviewerHeader}>
             <Box className={classes.reviewerTitleRow}>
               <Typography className={classes.reviewerTitle}>
-                Pull Request Rule #{reviewerConfig.id}
+                Pull Request Rule #{reviewerConfig.id || index + 1}
               </Typography>
               <Box display="flex" alignItems="center" style={{ gap: '16px' }}>
                 <Box display="flex" alignItems="center" style={{ gap: '8px' }}>
@@ -228,7 +228,7 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
                     Approvals required:
                   </Typography>
                   <Chip
-                    label={reviewerConfig.requiredApprovals.toString()}
+                    label={(reviewerConfig.requiredApprovals || 0).toString()}
                     className={classes.approvalsCount}
                     size="small"
                   />
@@ -245,9 +245,9 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
                   Source
                 </Typography>
                 <Typography className={classes.matcherValue}>
-                  {reviewerConfig.sourceMatcher.displayId}
+                  {reviewerConfig.sourceMatcher?.displayId || 'Unknown'}
                 </Typography>
-                {getSourceTypeChip(reviewerConfig.sourceMatcher.type.id)}
+                {getSourceTypeChip(reviewerConfig.sourceMatcher?.type?.id || 'UNKNOWN')}
               </Box>
               
               <Box display="flex" flexDirection="column" alignItems="center">
@@ -262,17 +262,17 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
                   Target
                 </Typography>
                 <Typography className={classes.matcherValue}>
-                  {reviewerConfig.targetMatcher.displayId}
+                  {reviewerConfig.targetMatcher?.displayId || 'Unknown'}
                 </Typography>
-                {getSourceTypeChip(reviewerConfig.targetMatcher.type.id)}
+                {getSourceTypeChip(reviewerConfig.targetMatcher?.type?.id || 'UNKNOWN')}
               </Box>
             </Box>
 
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
               <Typography variant="body2" color="textSecondary" style={{ marginBottom: 0 }}>
-                Required Reviewers ({reviewerConfig.reviewers.length}):
+                Required Reviewers ({reviewerConfig.reviewers?.length || 0}):
               </Typography>
-              {reviewerConfig.reviewers.length > 5 && (
+              {reviewerConfig.reviewers && reviewerConfig.reviewers.length > 5 && (
                 <TextField
                   size="small"
                   variant="outlined"
@@ -294,30 +294,30 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
             <Box 
               className={classes.reviewersList}
               style={{ 
-                maxHeight: reviewerConfig.reviewers.length > 5 ? '300px' : 'auto',
-                overflowY: reviewerConfig.reviewers.length > 5 ? 'auto' : 'visible'
+                maxHeight: reviewerConfig.reviewers && reviewerConfig.reviewers.length > 5 ? '300px' : 'auto',
+                overflowY: reviewerConfig.reviewers && reviewerConfig.reviewers.length > 5 ? 'auto' : 'visible'
               }}
             >
-              {filterReviewers(reviewerConfig.reviewers, reviewerConfig.id).length > 0 ? (
-                filterReviewers(reviewerConfig.reviewers, reviewerConfig.id).map((reviewer: any, reviewerIndex: number) => (
+              {filterReviewers(reviewerConfig.reviewers || [], reviewerConfig.id).length > 0 ? (
+                filterReviewers(reviewerConfig.reviewers || [], reviewerConfig.id).map((reviewer: any, reviewerIndex: number) => (
                   <Box key={reviewerIndex} className={classes.reviewerItem}>
                     <Box className={classes.reviewerInfo}>
                       <Avatar 
                         className={classes.userAvatar} 
                         style={{ 
-                          backgroundColor: generateAvatarColor(reviewer.user.displayName),
+                          backgroundColor: generateAvatarColor(reviewer.user?.displayName || 'Unknown'),
                           width: 36, 
                           height: 36 
                         }}
                       >
-                        {getUserInitials(reviewer.user.displayName)}
+                        {getUserInitials(reviewer.user?.displayName || 'Unknown')}
                       </Avatar>
                       <Box ml={2}>
                         <Typography variant="body2" style={{ fontWeight: 500 }}>
-                          {reviewer.user.displayName}
+                          {reviewer.user?.displayName || 'Unknown User'}
                         </Typography>
                         <Typography variant="caption" color="textSecondary">
-                          {reviewer.user.emailAddress}
+                          {reviewer.user?.emailAddress || 'No email'}
                         </Typography>
                       </Box>
                     </Box>
@@ -326,7 +326,10 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
               ) : (
                 <Box className={classes.emptyExemptions}>
                   <Typography variant="body2">
-                    No reviewers found matching "{reviewerSearchTerms[reviewerConfig.id]}"
+                    {reviewerSearchTerms[reviewerConfig.id] ? 
+                      `No reviewers found matching "${reviewerSearchTerms[reviewerConfig.id]}"` :
+                      'No reviewers configured for this rule'
+                    }
                   </Typography>
                 </Box>
               )}
