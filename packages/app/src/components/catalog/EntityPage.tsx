@@ -59,6 +59,7 @@ import {
 } from '@backstage/plugin-kubernetes';
 
 import { EntityBitbucketPullRequestsContent, EntityBitbucketPermissionsContent } from '@internal/plugin-bitbucket-pullrequests';
+import { EntityArtifactoryTab } from '@internal/plugin-artifactory';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -196,6 +197,10 @@ const serviceEntityPage = (
     <EntityLayout.Route path="/bitbucket-permissions" title="Bitbucket Permissions">
       <EntityBitbucketPermissionsContent />
     </EntityLayout.Route>
+
+    <EntityLayout.Route path="/artifactory" title="Artifactory">
+      <EntityArtifactoryTab />
+    </EntityLayout.Route>
   </EntityLayout>
 );
 
@@ -239,6 +244,10 @@ const websiteEntityPage = (
     <EntityLayout.Route path="/bitbucket-permissions" title="Bitbucket Permissions">
       <EntityBitbucketPermissionsContent />
     </EntityLayout.Route>
+
+    <EntityLayout.Route path="/artifactory" title="Artifactory">
+      <EntityArtifactoryTab />
+    </EntityLayout.Route>
   </EntityLayout>
 );
 
@@ -265,6 +274,10 @@ const defaultEntityPage = (
 
     <EntityLayout.Route path="/bitbucket-permissions" title="Bitbucket Permissions">
       <EntityBitbucketPermissionsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/artifactory" title="Artifactory">
+      <EntityArtifactoryTab />
     </EntityLayout.Route>
   </EntityLayout>
 );
