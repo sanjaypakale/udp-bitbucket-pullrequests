@@ -41,7 +41,7 @@ import {
   ViewList,
   SortByAlpha,
 } from '@material-ui/icons';
-import { ArtifactoryArtifact } from '../../types';
+import { Artifact } from '../../api';
 import { useArtifactoryCatalogTabStyles } from './ArtifactoryCatalogTab.styles';
 import { 
   ArtifactorySkeletonLoader, 
@@ -50,7 +50,7 @@ import {
 } from './ArtifactorySkeletonLoader';
 
 interface ArtifactoryCatalogTabProps {
-  artifacts: ArtifactoryArtifact[];
+  artifacts: Artifact[];
   loading?: boolean;
   error?: Error;
 }
@@ -86,7 +86,7 @@ const formatDate = (dateString: string): string => {
   }
 };
 
-const generateArtifactUrl = (artifact: ArtifactoryArtifact): string => {
+const generateArtifactUrl = (artifact: Artifact): string => {
   return `https://your-artifactory.com/ui/repos/tree/General/${artifact.repo}${artifact.path}`;
 };
 

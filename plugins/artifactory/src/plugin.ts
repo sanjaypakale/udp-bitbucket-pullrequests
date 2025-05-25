@@ -2,15 +2,26 @@ import {
   createPlugin,
   createRoutableExtension,
   createComponentExtension,
+  createApiFactory,
+  discoveryApiRef,
 } from '@backstage/core-plugin-api';
 
 import { rootRouteRef } from './routes';
+import { ArtifactoryPluginApiRef } from './api/types';
+import { ArtifactoryPluginBackendClient } from './api/ArtifactoryPluginBackendClient';
 
 export const artifactoryPlugin = createPlugin({
   id: 'artifactory',
   routes: {
     root: rootRouteRef,
   },
+  apis: [
+    createApiFactory({
+      api: ArtifactoryPluginApiRef,
+      deps: { discoveryApi: discoveryApiRef },
+      factory: ({ discoveryApi }) => new ArtifactoryPluginBackendClient({ discoveryApi }),
+    }),
+  ],
 });
 
 export const ArtifactoryPage = artifactoryPlugin.provide(
