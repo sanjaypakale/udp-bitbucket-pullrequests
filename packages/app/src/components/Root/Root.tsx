@@ -6,9 +6,9 @@ import LibraryBooks from '@material-ui/icons/LibraryBooks';
 import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
 import LogoFull from './LogoFull';
 import LogoIcon from './LogoIcon';
+import { UserProfilePopup } from './UserProfilePopup';
 import {
   Settings as SidebarSettings,
-  UserSettingsSignInAvatar,
 } from '@backstage/plugin-user-settings';
 import { SidebarSearchModal } from '@backstage/plugin-search';
 import {
@@ -27,6 +27,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import { MyGroupsSidebarItem } from '@backstage/plugin-org';
 import GroupIcon from '@material-ui/icons/People';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const useSidebarLogoStyles = makeStyles({
   root: {
@@ -83,13 +84,8 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
       </SidebarGroup>
       <SidebarSpace />
       <SidebarDivider />
-      <SidebarGroup
-        label="Settings"
-        icon={<UserSettingsSignInAvatar />}
-        to="/settings"
-      >
-        <SidebarSettings />
-      </SidebarGroup>
+      <SidebarItem icon={SettingsIcon} to="settings" text="Settings" />
+      <UserProfilePopup />
     </Sidebar>
     {children}
   </SidebarPage>
