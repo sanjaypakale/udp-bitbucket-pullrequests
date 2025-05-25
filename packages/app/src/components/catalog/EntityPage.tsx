@@ -58,7 +58,7 @@ import {
   isKubernetesAvailable,
 } from '@backstage/plugin-kubernetes';
 
-import { EntityBitbucketPullRequestsContent } from '@internal/plugin-bitbucket-pullrequests';
+import { EntityBitbucketPullRequestsContent, EntityBitbucketPermissionsContent } from '@internal/plugin-bitbucket-pullrequests';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -192,6 +192,10 @@ const serviceEntityPage = (
     <EntityLayout.Route path="/bitbucket-prs" title="Bitbucket Pull Requests">
       <EntityBitbucketPullRequestsContent />
     </EntityLayout.Route>
+
+    <EntityLayout.Route path="/bitbucket-permissions" title="Bitbucket Permissions">
+      <EntityBitbucketPermissionsContent />
+    </EntityLayout.Route>
   </EntityLayout>
 );
 
@@ -231,6 +235,10 @@ const websiteEntityPage = (
     <EntityLayout.Route path="/bitbucket-prs" title="Bitbucket Pull Requests">
       <EntityBitbucketPullRequestsContent />
     </EntityLayout.Route>
+
+    <EntityLayout.Route path="/bitbucket-permissions" title="Bitbucket Permissions">
+      <EntityBitbucketPermissionsContent />
+    </EntityLayout.Route>
   </EntityLayout>
 );
 
@@ -253,6 +261,10 @@ const defaultEntityPage = (
 
     <EntityLayout.Route path="/bitbucket-prs" title="Bitbucket Pull Requests">
       <EntityBitbucketPullRequestsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/bitbucket-permissions" title="Bitbucket Permissions">
+      <EntityBitbucketPermissionsContent />
     </EntityLayout.Route>
   </EntityLayout>
 );

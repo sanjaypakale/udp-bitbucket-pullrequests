@@ -1,6 +1,11 @@
 app:
   # Should be the same as backend.baseUrl when using the `app-backend` plugin.
   baseUrl: http://localhost:7007
+  analyticsGeneric:
+    host: ${ANALYTICS_ELK_HOST}
+    interval: ${ANALYTICS_ELK_INTERVAL}
+    basicAuthToken: ${ANALYTICS_ELK_AUTH}
+    debug: false
 
 backend:
   # Note that the baseUrl should be the URL that the browser and other clients
@@ -12,6 +17,10 @@ backend:
   # The listener can also be expressed as a single <host>:<port> string. In this case we bind to
   # all interfaces, the most permissive setting. The right value depends on your specific deployment.
   listen: ':7007'
+  
+  cors:
+    # Make sure to include the ELK endpoint in CORS configuration
+    Access-Control-Allow-Origin: ${ANALYTICS_ELK_HOST}
 
   # config options: https://node-postgres.com/apis/client
   database:

@@ -26,7 +26,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 
 // Function to fetch pull requests from Bitbucket API
 const fetchBitbucketPullRequests = async (
-  baseUrl: string,
+  backendBaseUrl: string,
   projectKey?: string,
   repoSlug?: string,
   token?: string,
@@ -44,7 +44,7 @@ const fetchBitbucketPullRequests = async (
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const url = `${baseUrl}/rest/api/1.0/projects/${projectKey}/repos/${repoSlug}/pull-requests?state=ALL&limit=100`;
+    const url = `${backendBaseUrl}/rest/api/1.0/projects/${projectKey}/repos/${repoSlug}/pull-requests?state=ALL&limit=100`;
     
     const response = await fetch(url, { headers });
     
@@ -261,15 +261,10 @@ export const BitbucketPullRequestsComponent = () => {
   const { entity } = useEntity();
   const classes = useStyles();
   const config = useApi(configApiRef);
-  
-  // Extract Bitbucket details from the entity annotations
-  let bitbucketBaseUrl = config.getOptionalString('bitbucket.baseUrl');
-  const bitbucketToken = config.getOptionalString('bitbucket.token');
-  
-  // Extract project key, repo slug and base URL from source-location annotation
+  let backendBaseUrl = config.getOptionalString('backend.baseUrl') || '';
   let projectKey: string | undefined;
   let repoSlug: string | undefined;
-  
+
   const sourceLocation = entity.metadata.annotations?.['backstage.io/source-location'];
   
   if (sourceLocation && sourceLocation.startsWith('url:')) {
@@ -279,8 +274,6 @@ export const BitbucketPullRequestsComponent = () => {
     // Extract the base URL (everything before /projects)
     const projectsIndex = url.indexOf('/projects/');
     if (projectsIndex > 0) {
-      // Set the base URL if not already set
-      bitbucketBaseUrl = bitbucketBaseUrl || url.substring(0, projectsIndex);
       
       // Extract project and repo from the URL pattern
       const matches = url.match(/projects\/([^\/]+)\/repos\/([^\/]+)/);
@@ -291,8 +284,7 @@ export const BitbucketPullRequestsComponent = () => {
     }
   }
   
-  // Default Bitbucket base URL if not found anywhere else
-  bitbucketBaseUrl = bitbucketBaseUrl || 'https://bitbucket.org';
+
   
   // Fetch pull requests from Bitbucket API
   const { value, loading, error } = useAsync(async () => {
@@ -301,12 +293,12 @@ export const BitbucketPullRequestsComponent = () => {
     }
     
     return await fetchBitbucketPullRequests(
-      bitbucketBaseUrl,
+      backendBaseUrl,
       projectKey,
-      repoSlug,
-      bitbucketToken
+      repoSlug
+      
     );
-  }, [bitbucketBaseUrl, projectKey, repoSlug, bitbucketToken]);
+  }, [backendBaseUrl, projectKey, repoSlug]);
 
   // Custom error message component
   const ErrorMessage = () => (

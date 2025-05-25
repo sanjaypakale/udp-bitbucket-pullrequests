@@ -3354,7 +3354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/core-plugin-api@npm:^1.10.7":
+"@backstage/core-plugin-api@npm:^1.10.7, @backstage/core-plugin-api@npm:^1.9.0":
   version: 1.10.7
   resolution: "@backstage/core-plugin-api@npm:1.10.7"
   dependencies:
@@ -8747,6 +8747,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pfeifferj/backstage-plugin-analytics-generic@npm:^0.0.39":
+  version: 0.0.39
+  resolution: "@pfeifferj/backstage-plugin-analytics-generic@npm:0.0.39"
+  dependencies:
+    "@backstage/core-plugin-api": "npm:^1.9.0"
+  peerDependencies:
+    react: ^16.13.1 || ^17.0.0 || ^18.2.0
+  checksum: 10c0/8306045a5c6b4bbefc1b99ca50a6cee96c0ce38536e7f5b5258a4cf7aae067c6d4a9abd8f5db56577b4bc7f48ab5909eb1cac6bd16b7591dd1d7d7af68ee4e40
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -13824,6 +13835,7 @@ __metadata:
     "@internal/plugin-bitbucket-pullrequests": "workspace:^"
     "@material-ui/core": "npm:^4.12.2"
     "@material-ui/icons": "npm:^4.9.1"
+    "@pfeifferj/backstage-plugin-analytics-generic": "npm:^0.0.39"
     "@playwright/test": "npm:^1.32.3"
     "@testing-library/dom": "npm:^9.0.0"
     "@testing-library/jest-dom": "npm:^6.0.0"

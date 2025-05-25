@@ -1,6 +1,11 @@
 app:
   title: Scaffolded Backstage App
   baseUrl: http://localhost:3000
+  analyticsGeneric:
+    host: ${ANALYTICS_ELK_HOST}
+    interval: ${ANALYTICS_ELK_INTERVAL} # interval in minutes to ship logs, default: 30 mins
+    basicAuthToken: ${ANALYTICS_ELK_AUTH} # basic auth token if required
+    debug: false # set to true for debugging, default: false
 
 organization:
   name: My Company
@@ -25,6 +30,8 @@ backend:
     origin: http://localhost:3000
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
+    # Add your ELK endpoint to the allowed origins
+    Access-Control-Allow-Origin: ${ANALYTICS_ELK_HOST}
   # This is for local development only, it is not recommended to use this in production
   # The production database configuration is stored in app-config.production.yaml
   database:
