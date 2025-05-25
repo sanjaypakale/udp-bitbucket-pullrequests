@@ -151,6 +151,27 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
     );
   };
 
+  const getScopeTypeChip = (scopeType: string) => {
+    const scopeMap = {
+      'REPOSITORY': { class: classes.writeChip, label: 'Repository Level' },
+      'PROJECT': { class: classes.adminChip, label: 'Project Level' },
+    };
+
+    const config = scopeMap[scopeType as keyof typeof scopeMap] || { 
+      class: classes.readChip, 
+      label: scopeType || 'Unknown' 
+    };
+
+    return (
+      <Chip
+        label={config.label}
+        size="small"
+        className={`${classes.permissionChip} ${config.class}`}
+        variant="outlined"
+      />
+    );
+  };
+
   // Helper function to get source display value based on type
   const getSourceDisplayValue = (sourceRefMatcher: any) => {
     if (!sourceRefMatcher) return 'Unknown';
@@ -186,9 +207,9 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
     
     const searchLower = searchTerm.toLowerCase();
     return reviewers.filter(reviewer => 
-      reviewer.user?.displayName?.toLowerCase().includes(searchLower) ||
-      reviewer.user?.name?.toLowerCase().includes(searchLower) ||
-      reviewer.user?.emailAddress?.toLowerCase().includes(searchLower)
+      reviewer.displayName?.toLowerCase().includes(searchLower) ||
+      reviewer.name?.toLowerCase().includes(searchLower) ||
+      reviewer.emailAddress?.toLowerCase().includes(searchLower)
     );
   };
 
@@ -242,9 +263,12 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
         <Card key={reviewerConfig.id || index} className={classes.reviewerCard} elevation={1}>
           <Box className={classes.reviewerHeader}>
             <Box className={classes.reviewerTitleRow}>
-              <Typography className={classes.reviewerTitle}>
-                Pull Request Rule #{reviewerConfig.id || index + 1}
-              </Typography>
+              <Box display="flex" alignItems="center" style={{ gap: '12px' }}>
+                <Typography className={classes.reviewerTitle}>
+                  Pull Request Rule #{reviewerConfig.id || index + 1}
+                </Typography>
+                {getScopeTypeChip(reviewerConfig.scope?.type)}
+              </Box>
               <Box display="flex" alignItems="center" style={{ gap: '16px' }}>
                 <Box display="flex" alignItems="center" style={{ gap: '8px' }}>
                   <Typography variant="body2" color="textPrimary" style={{ fontWeight: 500 }}>
@@ -328,19 +352,19 @@ export const DefaultReviewersTab = ({ loading }: { loading: boolean }) => {
                       <Avatar 
                         className={classes.userAvatar} 
                         style={{ 
-                          backgroundColor: generateAvatarColor(reviewer.user?.displayName || 'Unknown'),
+                          backgroundColor: generateAvatarColor(reviewer.displayName || 'Unknown'),
                           width: 36, 
                           height: 36 
                         }}
                       >
-                        {getUserInitials(reviewer.user?.displayName || 'Unknown')}
+                        {getUserInitials(reviewer.displayName || 'Unknown')}
                       </Avatar>
                       <Box ml={2}>
                         <Typography variant="body2" style={{ fontWeight: 500 }}>
-                          {reviewer.user?.displayName || 'Unknown User'}
+                          {reviewer.displayName || 'Unknown User'}
                         </Typography>
                         <Typography variant="caption" color="textSecondary">
-                          {reviewer.user?.emailAddress || 'No email'}
+                          {reviewer.emailAddress || 'No email'}
                         </Typography>
                       </Box>
                     </Box>
