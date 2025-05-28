@@ -154,7 +154,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const UserProfilePopup = () => {
   const classes = useStyles();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [userProfile, setUserProfile] = useState({
     displayName: 'Sanjay Pakale',
@@ -162,15 +162,32 @@ export const UserProfilePopup = () => {
   });
   const identityApi = useApi(identityApiRef);
   const { isOpen: sidebarIsOpen } = useSidebarOpenState();
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
+  const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     setAnchorEl(event.currentTarget);
-    setIsPopupOpen(!isPopupOpen);
+    setIsActive(true);
   };
 
-  const handleClose = () => {
-    setIsPopupOpen(false);
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsActive(false);
+    }, 100); // Small delay to allow moving to popover
+  };
+
+  const handlePopupMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  const handlePopupMouseLeave = () => {
+    setIsActive(false);
   };
 
   const handlePopupClick = (event: React.MouseEvent) => {
@@ -185,6 +202,15 @@ export const UserProfilePopup = () => {
       console.error('Sign out failed:', error);
     }
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   // Fetch real user profile
   useEffect(() => {
@@ -215,8 +241,9 @@ export const UserProfilePopup = () => {
   return (
     <>
       <div 
-        className={`${classes.sidebarItem} ${isPopupOpen ? 'active' : ''}`}
-        onClick={handleClick}
+        className={`${classes.sidebarItem} ${isActive ? 'active' : ''}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         data-testid="user-profile-sidebar-item"
       >
         <div className={classes.itemIcon}>
@@ -232,9 +259,8 @@ export const UserProfilePopup = () => {
       </div>
       
       <Popover
-        open={isPopupOpen}
+        open={isActive}
         anchorEl={anchorEl}
-        onClose={handleClose}
         anchorOrigin={{
           vertical: 'center',
           horizontal: 'right',
@@ -246,6 +272,8 @@ export const UserProfilePopup = () => {
         PaperProps={{
           className: classes.popupPaper,
           onClick: handlePopupClick,
+          onMouseEnter: handlePopupMouseEnter,
+          onMouseLeave: handlePopupMouseLeave,
           elevation: 0,
         }}
         disableRestoreFocus
