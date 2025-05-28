@@ -21,7 +21,7 @@ export const useBuildData = (artifacts: Artifact[]) => {
     // Single pass through artifacts for grouping
     for (let i = 0; i < artifacts.length; i++) {
       const artifact = artifacts[i];
-      const pathInfo = parsePath(artifact.path);
+      const pathInfo = parsePath(artifact.path, artifact.name);
       
       if (pathInfo) {
         const key = `${pathInfo.moduleName}|${pathInfo.branchType}|${pathInfo.branchName}|${pathInfo.buildNumber}|${artifact.repo}`;

@@ -33,29 +33,31 @@ export const formatDate = (dateString: string): string => {
 // Optimized path parsing with caching
 const pathCache = new Map<string, ParsedPath | null>();
 
-export const parsePath = (path: string): ParsedPath | null => {
-  if (pathCache.has(path)) {
-    return pathCache.get(path)!;
+export const parsePath = (path: string, fileName: string): ParsedPath | null => {
+  const cacheKey = `${path}|${fileName}`;
+  if (pathCache.has(cacheKey)) {
+    return pathCache.get(cacheKey)!;
   }
 
   const parts = path.split('/');
   if (parts.length >= 4) {
+    // Path contains: moduleName/branchType/branchName/buildNumber/folder/structure
+    // Everything after buildNumber is the folder structure
     const artifactPath = parts.slice(4).join('/');
-    const artifactName = parts[parts.length - 1];
     
     const result: ParsedPath = {
       moduleName: parts[0],
       branchType: parts[1],
       branchName: parts[2],
       buildNumber: parts[3],
-      artifactPath,
-      artifactName,
+      artifactPath, // Folder structure only
+      artifactName: fileName, // Actual filename from name attribute
     };
-    pathCache.set(path, result);
+    pathCache.set(cacheKey, result);
     return result;
   }
   
-  pathCache.set(path, null);
+  pathCache.set(cacheKey, null);
   return null;
 };
 
@@ -69,30 +71,36 @@ export const buildArtifactTree = (artifacts: Artifact[]): ArtifactNode => {
   };
 
   artifacts.forEach(artifact => {
-    const pathInfo = parsePath(artifact.path);
-    if (pathInfo && pathInfo.artifactPath) {
-      const pathParts = pathInfo.artifactPath.split('/');
+    const pathInfo = parsePath(artifact.path, artifact.name);
+    if (pathInfo) {
       let currentNode = root;
 
-      // Navigate/create folder structure
-      for (let i = 0; i < pathParts.length - 1; i++) {
-        const folderName = pathParts[i];
-        if (!currentNode.children.has(folderName)) {
-          currentNode.children.set(folderName, {
-            name: folderName,
-            fullPath: pathParts.slice(0, i + 1).join('/'),
-            isFile: false,
-            children: new Map(),
-          });
+      // If there's a folder structure after build number, navigate/create it
+      if (pathInfo.artifactPath && pathInfo.artifactPath.trim() !== '') {
+        const pathParts = pathInfo.artifactPath.split('/').filter(part => part.trim() !== '');
+        
+        // Navigate/create folder structure
+        for (let i = 0; i < pathParts.length; i++) {
+          const folderName = pathParts[i];
+          if (!currentNode.children.has(folderName)) {
+            currentNode.children.set(folderName, {
+              name: folderName,
+              fullPath: pathParts.slice(0, i + 1).join('/'),
+              isFile: false,
+              children: new Map(),
+            });
+          }
+          currentNode = currentNode.children.get(folderName)!;
         }
-        currentNode = currentNode.children.get(folderName)!;
       }
 
-      // Add the file
-      const fileName = pathParts[pathParts.length - 1];
+      // Add the file (using the actual filename from name attribute)
+      const fileName = pathInfo.artifactName;
+      const fullPath = pathInfo.artifactPath ? `${pathInfo.artifactPath}/${fileName}` : fileName;
+      
       currentNode.children.set(fileName, {
         name: fileName,
-        fullPath: pathInfo.artifactPath,
+        fullPath: fullPath,
         isFile: true,
         size: artifact.size,
         created: artifact.created,

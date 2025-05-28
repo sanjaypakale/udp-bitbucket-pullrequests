@@ -8,7 +8,7 @@ const sampleArtifacts: Artifact[] = [
   // Payment Service Build 1023 - Complex structure
   {
     "name": "payment-service-1.0.0.jar",
-    "path": "payment/feature/feature-user-auth/1023/binaries/services/payment-service-1.0.0.jar",
+    "path": "payment/feature/feature-user-auth/1023/binaries/services",
     "repo": "libs-release-local",
     "size": 2456789,
     "created": "2025-05-27T08:15:00.000Z",
@@ -22,7 +22,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "auth-lib-2.1.0.jar",
-    "path": "payment/feature/feature-user-auth/1023/binaries/libs/auth/auth-lib-2.1.0.jar",
+    "path": "payment/feature/feature-user-auth/1023/binaries/libs/auth",
     "repo": "libs-release-local",
     "size": 1234567,
     "created": "2025-05-27T08:16:00.000Z",
@@ -36,7 +36,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "crypto-utils-1.5.2.jar",
-    "path": "payment/feature/feature-user-auth/1023/binaries/libs/crypto/crypto-utils-1.5.2.jar",
+    "path": "payment/feature/feature-user-auth/1023/binaries/libs/crypto",
     "repo": "libs-release-local",
     "size": 876543,
     "created": "2025-05-27T08:17:00.000Z",
@@ -50,7 +50,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "database-connector-3.0.1.jar",
-    "path": "payment/feature/feature-user-auth/1023/binaries/libs/database/database-connector-3.0.1.jar",
+    "path": "payment/feature/feature-user-auth/1023/binaries/libs/database",
     "repo": "libs-release-local",
     "size": 654321,
     "created": "2025-05-27T08:18:00.000Z",
@@ -64,7 +64,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "application.yml",
-    "path": "payment/feature/feature-user-auth/1023/configs/application/application.yml",
+    "path": "payment/feature/feature-user-auth/1023/configs/application",
     "repo": "libs-release-local",
     "size": 4567,
     "created": "2025-05-27T08:19:00.000Z",
@@ -78,7 +78,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "database.properties",
-    "path": "payment/feature/feature-user-auth/1023/configs/database/database.properties",
+    "path": "payment/feature/feature-user-auth/1023/configs/database",
     "repo": "libs-release-local",
     "size": 2345,
     "created": "2025-05-27T08:20:00.000Z",
@@ -92,7 +92,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "security.conf",
-    "path": "payment/feature/feature-user-auth/1023/configs/security/security.conf",
+    "path": "payment/feature/feature-user-auth/1023/configs/security",
     "repo": "libs-release-local",
     "size": 3456,
     "created": "2025-05-27T08:21:00.000Z",
@@ -106,7 +106,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "deploy.sh",
-    "path": "payment/feature/feature-user-auth/1023/scripts/deployment/deploy.sh",
+    "path": "payment/feature/feature-user-auth/1023/scripts/deployment",
     "repo": "libs-release-local",
     "size": 1234,
     "created": "2025-05-27T08:22:00.000Z",
@@ -120,7 +120,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "rollback.sh",
-    "path": "payment/feature/feature-user-auth/1023/scripts/deployment/rollback.sh",
+    "path": "payment/feature/feature-user-auth/1023/scripts/deployment",
     "repo": "libs-release-local",
     "size": 987,
     "created": "2025-05-27T08:23:00.000Z",
@@ -134,7 +134,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "README.md",
-    "path": "payment/feature/feature-user-auth/1023/docs/README.md",
+    "path": "payment/feature/feature-user-auth/1023/docs",
     "repo": "libs-release-local",
     "size": 5678,
     "created": "2025-05-27T08:24:00.000Z",
@@ -148,7 +148,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "API_GUIDE.pdf",
-    "path": "payment/feature/feature-user-auth/1023/docs/api/API_GUIDE.pdf",
+    "path": "payment/feature/feature-user-auth/1023/docs/api",
     "repo": "libs-release-local",
     "size": 1567890,
     "created": "2025-05-27T08:25:00.000Z",
@@ -164,7 +164,7 @@ const sampleArtifacts: Artifact[] = [
   // Analytics Service Build 201 - Different structure
   {
     "name": "analytics-engine.zip",
-    "path": "analytics/hotfix/hotfix-login-crash/201/dist/analytics-engine.zip",
+    "path": "analytics/hotfix/hotfix-login-crash/201/dist",
     "repo": "libs-snapshot-local",
     "size": 15678901,
     "created": "2025-05-25T10:00:00.000Z",
@@ -178,7 +178,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "reporting-lib-2.1.0.jar",
-    "path": "analytics/hotfix/hotfix-login-crash/201/libs/reporting/reporting-lib-2.1.0.jar",
+    "path": "analytics/hotfix/hotfix-login-crash/201/libs/reporting",
     "repo": "libs-snapshot-local",
     "size": 3456789,
     "created": "2025-05-25T10:01:00.000Z",
@@ -192,7 +192,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "metrics-collector-1.8.3.jar",
-    "path": "analytics/hotfix/hotfix-login-crash/201/libs/metrics/metrics-collector-1.8.3.jar",
+    "path": "analytics/hotfix/hotfix-login-crash/201/libs/metrics",
     "repo": "libs-snapshot-local",
     "size": 2345678,
     "created": "2025-05-25T10:02:00.000Z",
@@ -206,7 +206,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "dashboard.tar.gz",
-    "path": "analytics/hotfix/hotfix-login-crash/201/frontend/dashboard/dashboard.tar.gz",
+    "path": "analytics/hotfix/hotfix-login-crash/201/frontend/dashboard",
     "repo": "libs-snapshot-local",
     "size": 8901234,
     "created": "2025-05-25T10:03:00.000Z",
@@ -220,7 +220,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "widgets.js",
-    "path": "analytics/hotfix/hotfix-login-crash/201/frontend/assets/js/widgets.js",
+    "path": "analytics/hotfix/hotfix-login-crash/201/frontend/assets/js",
     "repo": "libs-snapshot-local",
     "size": 123456,
     "created": "2025-05-25T10:04:00.000Z",
@@ -234,7 +234,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "styles.css",
-    "path": "analytics/hotfix/hotfix-login-crash/201/frontend/assets/css/styles.css",
+    "path": "analytics/hotfix/hotfix-login-crash/201/frontend/assets/css",
     "repo": "libs-snapshot-local",
     "size": 67890,
     "created": "2025-05-25T10:05:00.000Z",
@@ -250,7 +250,7 @@ const sampleArtifacts: Artifact[] = [
   // User Management Service Build 567 - Another complex structure
   {
     "name": "user-service-core.jar",
-    "path": "user-management/release/release-v2.0/567/services/core/user-service-core.jar",
+    "path": "user-management/release/release-v2.0/567/services/core",
     "repo": "libs-release-local",
     "size": 4567890,
     "created": "2025-05-26T14:30:00.000Z",
@@ -264,7 +264,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "user-service-api.jar",
-    "path": "user-management/release/release-v2.0/567/services/api/user-service-api.jar",
+    "path": "user-management/release/release-v2.0/567/services/api",
     "repo": "libs-release-local",
     "size": 1890123,
     "created": "2025-05-26T14:31:00.000Z",
@@ -278,7 +278,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "validation-rules.json",
-    "path": "user-management/release/release-v2.0/567/config/validation/validation-rules.json",
+    "path": "user-management/release/release-v2.0/567/config/validation",
     "repo": "libs-release-local",
     "size": 12345,
     "created": "2025-05-26T14:32:00.000Z",
@@ -292,7 +292,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "email-templates.zip",
-    "path": "user-management/release/release-v2.0/567/resources/templates/email/email-templates.zip",
+    "path": "user-management/release/release-v2.0/567/resources/templates/email",
     "repo": "libs-release-local",
     "size": 567890,
     "created": "2025-05-26T14:33:00.000Z",
@@ -306,7 +306,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "migration-v2.0.sql",
-    "path": "user-management/release/release-v2.0/567/database/migrations/v2.0/migration-v2.0.sql",
+    "path": "user-management/release/release-v2.0/567/database/migrations/v2.0",
     "repo": "libs-release-local",
     "size": 89012,
     "created": "2025-05-26T14:34:00.000Z",
@@ -320,7 +320,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "test-data.sql",
-    "path": "user-management/release/release-v2.0/567/database/test-data/test-data.sql",
+    "path": "user-management/release/release-v2.0/567/database/test-data",
     "repo": "libs-release-local",
     "size": 234567,
     "created": "2025-05-26T14:35:00.000Z",
@@ -336,7 +336,7 @@ const sampleArtifacts: Artifact[] = [
   // Notification Service Build 89 - Microservice structure
   {
     "name": "notification-service.war",
-    "path": "notification/bugfix/bugfix-email-retry/89/webapp/notification-service.war",
+    "path": "notification/bugfix/bugfix-email-retry/89/webapp",
     "repo": "libs-snapshot-local",
     "size": 12345678,
     "created": "2025-05-24T16:45:00.000Z",
@@ -350,7 +350,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "email-service.jar",
-    "path": "notification/bugfix/bugfix-email-retry/89/microservices/email/email-service.jar",
+    "path": "notification/bugfix/bugfix-email-retry/89/microservices/email",
     "repo": "libs-snapshot-local",
     "size": 3456789,
     "created": "2025-05-24T16:46:00.000Z",
@@ -364,7 +364,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "sms-service.jar",
-    "path": "notification/bugfix/bugfix-email-retry/89/microservices/sms/sms-service.jar",
+    "path": "notification/bugfix/bugfix-email-retry/89/microservices/sms",
     "repo": "libs-snapshot-local",
     "size": 2345678,
     "created": "2025-05-24T16:47:00.000Z",
@@ -378,7 +378,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "push-service.jar",
-    "path": "notification/bugfix/bugfix-email-retry/89/microservices/push/push-service.jar",
+    "path": "notification/bugfix/bugfix-email-retry/89/microservices/push",
     "repo": "libs-snapshot-local",
     "size": 1987654,
     "created": "2025-05-24T16:48:00.000Z",
@@ -392,7 +392,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "docker-compose.yml",
-    "path": "notification/bugfix/bugfix-email-retry/89/deployment/docker/docker-compose.yml",
+    "path": "notification/bugfix/bugfix-email-retry/89/deployment/docker",
     "repo": "libs-snapshot-local",
     "size": 6789,
     "created": "2025-05-24T16:49:00.000Z",
@@ -406,7 +406,7 @@ const sampleArtifacts: Artifact[] = [
   },
   {
     "name": "kubernetes-manifests.tar",
-    "path": "notification/bugfix/bugfix-email-retry/89/deployment/k8s/kubernetes-manifests.tar",
+    "path": "notification/bugfix/bugfix-email-retry/89/deployment/k8s",
     "repo": "libs-snapshot-local",
     "size": 45678,
     "created": "2025-05-24T16:50:00.000Z",
@@ -417,6 +417,36 @@ const sampleArtifacts: Artifact[] = [
     "updatedBy": "dev-team",
     "sha1": "rrr9012sss3456ttt777uuu666iiijjjkkklllmmm",
     "md5": "441d8cd98f00b204e9800998ecf84275"
+  },
+
+  // Test artifacts directly in build folder (no subfolders)
+  {
+    "name": "build-info.json",
+    "path": "payment/feature/feature-user-auth/1023",
+    "repo": "libs-release-local",
+    "size": 1024,
+    "created": "2025-05-27T08:10:00.000Z",
+    "modified": "2025-05-27T08:40:00.000Z",
+    "updated": "2025-05-27T08:40:00.000Z",
+    "createdBy": "ci-pipeline",
+    "modifiedBy": "ci-pipeline",
+    "updatedBy": "ci-pipeline",
+    "sha1": "abc123def456ghi789jkl012mno345pqr678stu901",
+    "md5": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+  },
+  {
+    "name": "CHANGELOG.txt",
+    "path": "analytics/hotfix/hotfix-login-crash/201",
+    "repo": "libs-snapshot-local",
+    "size": 2048,
+    "created": "2025-05-25T09:55:00.000Z",
+    "modified": "2025-05-25T10:15:00.000Z",
+    "updated": "2025-05-25T10:15:00.000Z",
+    "createdBy": "hotfix-user",
+    "modifiedBy": "ci-bot",
+    "updatedBy": "ci-bot",
+    "sha1": "def456ghi789jkl012mno345pqr678stu901vwx234",
+    "md5": "b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7"
   }
 ];
 
