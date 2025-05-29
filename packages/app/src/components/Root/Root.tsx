@@ -7,6 +7,7 @@ import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
 import LogoFull from './LogoFull';
 import LogoIcon from './LogoIcon';
 import { UserProfilePopup } from './UserProfilePopup';
+
 import {
   Settings as SidebarSettings,
 } from '@backstage/plugin-user-settings';
@@ -84,7 +85,6 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
       </SidebarGroup>
       <SidebarSpace />
       <SidebarDivider />
-      <SidebarItem icon={SettingsIcon} to="settings" text="Settings" />
       <UserProfilePopup />
     </Sidebar>
     {children}

@@ -1,266 +1,241 @@
 import React, { useState, useEffect } from 'react';
 import {
-  makeStyles,
-  Popover,
+  Box,
   Typography,
+  Popover,
   Avatar,
   Button,
+  makeStyles,
+  Divider,
 } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useApi, identityApiRef } from '@backstage/core-plugin-api';
-import { useSidebarOpenState } from '@backstage/core-components';
+import { UserSettingsSignInAvatar } from '@backstage/plugin-user-settings';
+import { SidebarItem } from '@backstage/core-components';
 
 const useStyles = makeStyles((theme) => ({
-  sidebarItem: {
-    height: 48,
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(1),
-    cursor: 'pointer',
-    position: 'relative',
-    color: theme.palette.navigation?.color || theme.palette.text.primary,
-    transition: 'all 0.2s ease',
-    '&:hover': {
-      backgroundColor: theme.palette.navigation?.navItem?.hoverBackground || theme.palette.action.hover,
-    },
-    '&.active': {
-      backgroundColor: theme.palette.navigation?.navItem?.hoverBackground || theme.palette.action.selected,
-      borderRight: `3px solid ${theme.palette.primary.main}`,
-      color: theme.palette.primary.main,
-      '& $avatar': {
-        backgroundColor: theme.palette.primary.main,
-        boxShadow: `0 0 0 2px ${theme.palette.primary.main}20`,
-      },
-      '& $itemText': {
-        color: theme.palette.primary.main,
-        fontWeight: 600,
-      },
-    },
-  },
-  itemIcon: {
-    width: 24,
-    height: 24,
-    marginRight: theme.spacing(2),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatar: {
-    width: 24,
-    height: 24,
-    backgroundColor: theme.palette.primary.main,
-    fontSize: '0.75rem',
-    fontWeight: 600,
-    transition: 'all 0.2s ease',
-  },
-  itemText: {
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    flex: 1,
-    transition: 'all 0.2s ease',
-  },
-  popupPaper: {
-    position: 'relative',
-    padding: 0,
-    minWidth: 320,
-    maxWidth: 360,
-    borderRadius: 8,
+  popoverContainer: {
+    width: 320,
+    borderRadius: theme.spacing(1),
     overflow: 'visible',
-    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1)',
-    marginLeft: theme.spacing(6),
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+    position: 'relative',
+    marginLeft: theme.spacing(0.5),
+    maxHeight: 'none',
+    height: 'auto',
   },
   arrow: {
     position: 'absolute',
-    left: -12,
-    bottom: theme.spacing(4), // Position near the bottom of the popup
+    left: -18,
+    bottom: '10px',
     width: 0,
     height: 0,
-    borderTop: '12px solid transparent',
-    borderBottom: '12px solid transparent',
-    borderRight: '12px solid white',
-    zIndex: 1,
+    borderTop: '18px solid transparent',
+    borderBottom: '18px solid transparent',
+    borderRight: '18px solid #ffffff',
+    zIndex: 10,
+    filter: 'drop-shadow(-2px 0px 4px rgba(0,0,0,0.15))',
   },
-  popupContent: {
-    borderRadius: 8,
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
+  arrowBorder: {
+    position: 'absolute',
+    left: -20,
+    bottom: '78px',
+    width: 0,
+    height: 0,
+    borderTop: '20px solid transparent',
+    borderBottom: '20px solid transparent',
+    borderRight: '20px solid rgba(0,0,0,0.1)',
+    zIndex: 9,
   },
   header: {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    color: 'white',
     padding: theme.spacing(3),
+    color: 'white',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: theme.spacing(2),
+    minHeight: 'auto',
+  },
+  headerContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    minWidth: 0,
+    overflow: 'hidden',
+    wordBreak: 'break-word',
+  },
+  content: {
+    padding: theme.spacing(2),
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1),
+  },
+  userAvatar: {
+    width: 64,
+    height: 64,
+    fontSize: '1.5rem',
+    fontWeight: 600,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    color: 'white',
+    flexShrink: 0,
+  },
+  userName: {
+    fontSize: '1.1rem',
+    fontWeight: 600,
+    marginBottom: theme.spacing(0.5),
+    wordWrap: 'break-word',
+    wordBreak: 'break-word',
+    lineHeight: 1.3,
+    hyphens: 'auto',
+  },
+  userEmailPopover: {
+    fontSize: '0.875rem',
+    opacity: 0.9,
+    wordWrap: 'break-word',
+    wordBreak: 'break-word',
+    lineHeight: 1.2,
+    hyphens: 'auto',
+  },
+  menuItem: {
+    width: '100%',
+    padding: theme.spacing(1.5, 2),
+    textAlign: 'left',
+    borderRadius: theme.spacing(0.5),
+    marginBottom: theme.spacing(1),
+    '&:hover': {
+      backgroundColor: theme.palette.grey[50],
+    },
+  },
+  signOutButton: {
+    width: '100%',
+    padding: theme.spacing(1.5),
+    color: '#e53e3e',
+    fontWeight: 500,
+    textTransform: 'none',
+    justifyContent: 'flex-start',
+    marginTop: theme.spacing(1),
+    borderRadius: theme.spacing(0.5),
+    '&:hover': {
+      backgroundColor: '#fed7d7',
+    },
+  },
+  sidebarItemContent: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1.5),
+    cursor: 'pointer',
+    padding: theme.spacing(1.5, 2),
+    borderRadius: theme.spacing(0.5),
+    margin: theme.spacing(0),
+    width: '100%',
+    minHeight: '48px',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
   },
   userInfo: {
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(2),
-  },
-  popupAvatar: {
-    width: 64,
-    height: 64,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    fontSize: '1.5rem',
-    fontWeight: 700,
-    border: '3px solid rgba(255, 255, 255, 0.3)',
-  },
-  userDetails: {
+    minWidth: 0,
     flex: 1,
   },
   displayName: {
-    fontWeight: 700,
-    fontSize: '1.2rem',
-    color: 'white',
-    marginBottom: theme.spacing(0.5),
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    color: theme.palette.common.white,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: '150px',
   },
-  email: {
-    fontSize: '0.9rem',
-    color: 'rgba(255, 255, 255, 0.9)',
-  },
-  content: {
-    padding: theme.spacing(3),
-    backgroundColor: theme.palette.background.paper,
-  },
-  signOutButton: {
-    width: '100%',
-    background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)',
-    color: 'white',
-    border: 'none',
-    borderRadius: 12,
-    padding: theme.spacing(1.5, 2),
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    textTransform: 'none',
-    boxShadow: '0 4px 16px rgba(238, 90, 82, 0.3)',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    '&:hover': {
-      background: 'linear-gradient(135deg, #ff5252 0%, #d32f2f 100%)',
-      transform: 'translateY(-2px)',
-      boxShadow: '0 8px 24px rgba(238, 90, 82, 0.4)',
-    },
-    '&:active': {
-      transform: 'translateY(0)',
-      boxShadow: '0 2px 8px rgba(238, 90, 82, 0.3)',
-    },
-  },
-  signOutIcon: {
-    marginRight: theme.spacing(1),
-    fontSize: '1.1rem',
+  userEmail: {
+    fontSize: '0.75rem',
+    color: 'rgba(255, 255, 255, 0.7)',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 }));
 
+// Generate user initials from display name
+const getUserInitials = (name: string): string => {
+  return name
+    .split(' ')
+    .map(part => part.charAt(0))
+    .join('')
+    .toUpperCase()
+    .substring(0, 2);
+};
+
 export const UserProfilePopup = () => {
   const classes = useStyles();
-  const [isActive, setIsActive] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [userProfile, setUserProfile] = useState({
-    displayName: 'Sanjay Pakale',
-    email: 'sanjaypakale@gmail.com',
-  });
   const identityApi = useApi(identityApiRef);
-  const { isOpen: sidebarIsOpen } = useSidebarOpenState();
-  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [userProfile, setUserProfile] = useState<{
+    displayName: string;
+    email: string;
+  } | null>(null);
 
-  const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    setAnchorEl(event.currentTarget);
-    setIsActive(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsActive(false);
-    }, 100); // Small delay to allow moving to popover
-  };
-
-  const handlePopupMouseEnter = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-  };
-
-  const handlePopupMouseLeave = () => {
-    setIsActive(false);
-  };
-
-  const handlePopupClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await identityApi.signOut();
-      window.location.reload();
-    } catch (error) {
-      console.error('Sign out failed:', error);
-    }
-  };
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Fetch real user profile
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const profile = await identityApi.getProfileInfo();
         setUserProfile({
-          displayName: profile.displayName || 'Guest User',
-          email: profile.email || 'guest@example.com',
+          displayName: profile.displayName || 'sanjay pakale asdfafaasdfasdfa',
+          email: profile.email || 'sanjaypakale@gmail.com',
         });
       } catch (error) {
         console.error('Failed to fetch user profile:', error);
+        setUserProfile({
+          displayName: 'sanjay pakale adffdasdfasdfasdf',
+          email: 'sanjaypakale@gmail.com',
+        });
       }
     };
 
     fetchUserProfile();
   }, [identityApi]);
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part.charAt(0))
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await identityApi.signOut();
+      handleClose();
+    } catch (error) {
+      console.error('Failed to sign out:', error);
+    }
+  };
+
+  const open = Boolean(anchorEl);
+
+  if (!userProfile) {
+    return null;
+  }
 
   return (
     <>
-      <div 
-        className={`${classes.sidebarItem} ${isActive ? 'active' : ''}`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        data-testid="user-profile-sidebar-item"
-      >
-        <div className={classes.itemIcon}>
-          <Avatar className={classes.avatar}>
-            {getInitials(userProfile.displayName)}
-          </Avatar>
-        </div>
-        {sidebarIsOpen && (
-          <span className={classes.itemText}>
+      <Box className={classes.sidebarItemContent} onClick={handleClick}>
+        <UserSettingsSignInAvatar />
+        <Box className={classes.userInfo}>
+          <Typography className={classes.displayName}>
             {userProfile.displayName}
-          </span>
-        )}
-      </div>
+          </Typography>
+        </Box>
+      </Box>
       
       <Popover
-        open={isActive}
+        open={open}
         anchorEl={anchorEl}
+        onClose={handleClose}
+        getContentAnchorEl={null}
         anchorOrigin={{
           vertical: 'center',
           horizontal: 'right',
@@ -269,50 +244,50 @@ export const UserProfilePopup = () => {
           vertical: 'center',
           horizontal: 'left',
         }}
+        container={document.body}
+        disablePortal={false}
         PaperProps={{
-          className: classes.popupPaper,
-          onClick: handlePopupClick,
-          onMouseEnter: handlePopupMouseEnter,
-          onMouseLeave: handlePopupMouseLeave,
-          elevation: 0,
+          className: classes.popoverContainer,
+          style: { 
+            marginLeft: '4px',
+            zIndex: 10000,
+            position: 'relative',
+          },
         }}
-        disableRestoreFocus
+        style={{ zIndex: 10000 }}
+        marginThreshold={12}
         disableAutoFocus
         disableEnforceFocus
-        style={{ 
-          marginLeft: 32, // Increased margin to ensure no overlap
-        }}
+        disableRestoreFocus
       >
-        <div className={classes.arrow} />
-        <div className={classes.popupContent}>
-          <div className={classes.header}>
-            <div className={classes.userInfo}>
-              <Avatar className={classes.popupAvatar}>
-                {getInitials(userProfile.displayName)}
-              </Avatar>
-              <div className={classes.userDetails}>
-                <Typography className={classes.displayName}>
-                  {userProfile.displayName}
-                </Typography>
-                <Typography className={classes.email}>
-                  {userProfile.email}
-                </Typography>
-              </div>
-            </div>
-          </div>
+        <Box className={classes.arrow} />
+        <Box className={classes.arrowBorder} />
+        
+        <Box className={classes.header}>
+          <Avatar className={classes.userAvatar}>
+            {getUserInitials(userProfile.displayName)}
+          </Avatar>
+          <Box className={classes.headerContent}>
+            <Typography className={classes.userName}>
+              {userProfile.displayName}
+            </Typography>
+            <Typography className={classes.userEmailPopover}>
+              {userProfile.email}
+            </Typography>
+          </Box>
+        </Box>
+        
+        <Box className={classes.content}>
           
-          <div className={classes.content}>
-            <Button
-              className={classes.signOutButton}
-              onClick={handleSignOut}
-              variant="contained"
-              fullWidth
-            >
-              <ExitToAppIcon className={classes.signOutIcon} />
-              Sign Out
-            </Button>
-          </div>
-        </div>
+          
+          <Button
+            className={classes.signOutButton}
+            startIcon={<ExitToAppIcon />}
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </Button>
+        </Box>
       </Popover>
     </>
   );
