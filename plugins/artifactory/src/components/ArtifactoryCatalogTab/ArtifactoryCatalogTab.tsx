@@ -59,15 +59,15 @@ export const ArtifactoryCatalogTab: React.FC<ArtifactoryCatalogTabProps> = ({
 
   // Handle build deletion
   const handleDeleteBuild = (buildToDelete: BuildGroup) => {
-    // TODO: Implement actual deletion logic here
-    // This could involve calling an API endpoint to delete the build
-    console.log('Deleting build:', buildToDelete);
+    // NOTE: Delete functionality is planned for future releases
+    // This feature is not currently implemented but will be included in upcoming versions
+    console.log('Delete functionality planned for future release. Build selected:', buildToDelete);
     
-    // For now, just show a confirmation that the delete was triggered
-    // In a real implementation, you would:
-    // 1. Call an API to delete the build
-    // 2. Update the local state or refetch data
-    // 3. Show a success/error message
+    // When implemented in future releases, this will:
+    // 1. Call an API endpoint to delete the build from Artifactory
+    // 2. Update the local state or refetch data to reflect changes
+    // 3. Show appropriate success/error messages to the user
+    // 4. Handle proper error handling and rollback scenarios
   };
 
   if (loading) {

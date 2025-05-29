@@ -257,24 +257,24 @@ export const BuildCard = memo<BuildCardProps>(({ build, classes, onDelete }) => 
         <CardActions className={classes.cardActions} style={{ padding: '8px 16px 16px', justifyContent: 'space-between' }}>
           {/* Delete Button - Left Side */}
           {onDelete && (
-            <Tooltip title="Delete Build" arrow>
+            <Tooltip title="Delete Build (Future Feature Preview)" arrow>
               <IconButton
                 onClick={handleDeleteClick}
                 size="small"
                 style={{
-                  color: '#f44336',
-                  border: '1px solid #f44336',
+                  color: '#ff9800',
+                  border: '1px solid #ff9800',
                   borderRadius: 4,
                   padding: '6px',
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f44336';
+                  e.currentTarget.style.backgroundColor = '#ff9800';
                   e.currentTarget.style.color = 'white';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = '#f44336';
+                  e.currentTarget.style.color = '#ff9800';
                 }}
               >
                 <Delete style={{ fontSize: 16 }} />
@@ -319,19 +319,24 @@ export const BuildCard = memo<BuildCardProps>(({ build, classes, onDelete }) => 
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
       >
-        <DialogTitle id="delete-dialog-title" style={{ color: '#f44336' }}>
-          Delete Build
+        <DialogTitle id="delete-dialog-title" style={{ color: '#ff9800' }}>
+          Delete Build - Future Feature Preview
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete the build <strong>{build.moduleName}: {build.buildNumber}</strong>?
+            <strong>This is a preview of functionality planned for future releases.</strong>
             <br />
             <br />
-            This action will remove all {build.artifactCount} artifact{build.artifactCount !== 1 ? 's' : ''} 
+            When implemented, this feature will allow you to delete the build <strong>{build.moduleName}: {build.buildNumber}</strong>.
+            <br />
+            <br />
+            The action would remove all {build.artifactCount} artifact{build.artifactCount !== 1 ? 's' : ''} 
             ({formatFileSize(build.totalSize)}) from the repository <strong>{build.repo}</strong>.
             <br />
             <br />
-            <span style={{ color: '#f44336', fontWeight: 600 }}>This action cannot be undone.</span>
+            <span style={{ color: '#ff9800', fontWeight: 600 }}>
+              Delete functionality will be available in upcoming releases.
+            </span>
           </DialogContentText>
         </DialogContent>
         <DialogActions style={{ padding: '8px 24px 16px' }}>
@@ -341,18 +346,18 @@ export const BuildCard = memo<BuildCardProps>(({ build, classes, onDelete }) => 
             variant="outlined"
             style={{ marginRight: 8 }}
           >
-            Cancel
+            Close
           </Button>
           <Button 
             onClick={handleDeleteConfirm} 
             style={{
-              backgroundColor: '#f44336',
+              backgroundColor: '#ff9800',
               color: 'white',
             }}
             variant="contained"
             autoFocus
           >
-            Delete
+            Preview Feature
           </Button>
         </DialogActions>
       </Dialog>
