@@ -16,7 +16,7 @@ spec:
   type: website
   lifecycle: experimental
   owner: guests
-  system: examples
+  system: dvx
   providesApis: [example-grpc-api]
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api

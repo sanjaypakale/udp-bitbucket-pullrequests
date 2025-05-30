@@ -22,6 +22,7 @@ import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
 import { apis } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
+import { CustomCatalogPage } from './components/catalog/CustomCatalogPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
 
@@ -98,6 +99,7 @@ const routes = (
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
     <Route path="/bitbucket-pullrequests" element={<BitbucketPullrequestsPage />} />
     <Route path="/artifactory" element={<ArtifactoryPage />} />
+    <Route path="/catalogs" element={<CustomCatalogPage />} />
   </FlatRoutes>
 );
 
