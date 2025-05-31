@@ -7,6 +7,7 @@ import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
 import LogoFull from './LogoFull';
 import LogoIcon from './LogoIcon';
 import { UserProfilePopup } from './UserProfilePopup';
+import { ChatButton } from '@internal/plugin-ai-assistant';
 
 import {
   Settings as SidebarSettings,
@@ -29,6 +30,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { MyGroupsSidebarItem } from '@backstage/plugin-org';
 import GroupIcon from '@material-ui/icons/People';
 import SettingsIcon from '@material-ui/icons/Settings';
+import ChatIcon from '@material-ui/icons/Chat';
 
 const useSidebarLogoStyles = makeStyles({
   root: {
@@ -77,6 +79,7 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
         <SidebarItem icon={ExtensionIcon} to="api-docs" text="APIs" />
         <SidebarItem icon={LibraryBooks} to="docs" text="Docs" />
         <SidebarItem icon={CreateComponentIcon} to="create" text="Create..." />
+        <SidebarItem icon={ChatIcon} to="ai-assistant" text="AI Assistant" />
         {/* End global nav */}
         <SidebarDivider />
         <SidebarScrollWrapper>
@@ -88,5 +91,6 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
       <UserProfilePopup />
     </Sidebar>
     {children}
+    <ChatButton />
   </SidebarPage>
 );

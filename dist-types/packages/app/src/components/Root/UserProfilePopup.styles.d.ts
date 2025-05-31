@@ -1,0 +1,1 @@
+export declare const useUserProfilePopupStyles: (props?: any) => import("@material-ui/styles").ClassNameMap<"content" | "header" | "displayName" | "userEmail" | "arrow" | "popoverContainer" | "arrowBorder" | "headerContent" | "userAvatar" | "sidebarAvatar" | "userName" | "userEmailPopover" | "menuItem" | "signOutButton" | "sidebarItemContent" | "userInfo">;

@@ -53,4 +53,8 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 backend.add(import('@backstage/plugin-kubernetes-backend'));
 
 backend.add(import('@internal/plugin-bitbucket-pullrequests-backend'));
+
+// AI Assistant plugin
+backend.add(import('@internal/plugin-ai-assistant-backend'));
+
 backend.start();

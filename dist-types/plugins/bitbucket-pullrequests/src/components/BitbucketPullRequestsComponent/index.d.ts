@@ -1,0 +1,1 @@
+export { BitbucketPullRequestsComponent } from './BitbucketPullRequestsComponent';

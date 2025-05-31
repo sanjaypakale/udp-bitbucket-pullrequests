@@ -38,6 +38,7 @@ import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { BitbucketPullrequestsPage } from '@internal/plugin-bitbucket-pullrequests';
 import { ArtifactoryPage } from '@internal/plugin-artifactory';
+import { AiAssistantPage } from '@internal/plugin-ai-assistant';
 
 const app = createApp({
   apis,
@@ -100,6 +101,7 @@ const routes = (
     <Route path="/bitbucket-pullrequests" element={<BitbucketPullrequestsPage />} />
     <Route path="/artifactory" element={<ArtifactoryPage />} />
     <Route path="/catalogs" element={<CustomCatalogPage />} />
+    <Route path="/ai-assistant" element={<AiAssistantPage />} />
   </FlatRoutes>
 );
 

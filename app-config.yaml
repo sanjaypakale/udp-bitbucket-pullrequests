@@ -121,3 +121,17 @@ kubernetes:
 permission:
   # setting this to `false` will disable permissions
   enabled: true
+
+# AI Assistant Configuration
+aiAssistant:
+  # OpenAI Configuration
+  openai:
+    # Get your API key from https://platform.openai.com/api-keys
+    apiKey: ${OPENAI_API_KEY}
+  
+  # Slack Integration Configuration
+  slack:
+    # Get these from your Slack app configuration at https://api.slack.com/apps
+    signingSecret: ${SLACK_SIGNING_SECRET}
+    botToken: ${SLACK_BOT_TOKEN}
+    appToken: ${SLACK_APP_TOKEN}
